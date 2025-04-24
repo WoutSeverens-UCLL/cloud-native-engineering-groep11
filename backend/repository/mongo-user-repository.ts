@@ -78,6 +78,9 @@ export class MongoUserRepository {
 
   async getAllUsers(): Promise<User[]> {
     const result = await this.collection.find({}).toArray();
+    if (!result) {
+      throw CustomError.notFound("No users found.");
+    }
     return result.map((doc) => this.toUser(doc));
   }
 

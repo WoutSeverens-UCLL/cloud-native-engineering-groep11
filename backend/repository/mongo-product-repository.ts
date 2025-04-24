@@ -94,6 +94,9 @@ export class MongoProductRepository {
 
   async getAllProducts(): Promise<Product[]> {
     const result = await this.collection.find({}).toArray();
+    if (!result) {
+      throw CustomError.notFound("No products found.");
+    }
     return result.map((doc) => this.toProduct(doc));
   }
 
