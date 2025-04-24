@@ -55,6 +55,14 @@ export class MongoReviewRepository {
     }
   }
 
+  async getAllReviews(): Promise<Review[]> {
+    const result = await this.collection.find({}).toArray();
+    if (!result) {
+      throw CustomError.notFound("No reviews found.");
+    }
+    return result.map((doc) => this.toReview(doc));
+  }
+
   async getReview(id: string): Promise<Review> {
     const result = await this.collection.findOne({
       _id: new ObjectId(id),
