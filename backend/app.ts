@@ -17,7 +17,7 @@ app.use(
       secret: process.env.JWT_SECRET || 'default_secret',
       algorithms: ['HS256'],
   }).unless({
-      path: ['/status'],
+      path: ['/status','/users/login', '/users/signup'],
   })
 );
 

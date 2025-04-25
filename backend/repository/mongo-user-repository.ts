@@ -48,6 +48,10 @@ export class MongoUserRepository {
   }
 
   async createUser(user: User): Promise<User> {
+    const existingUser = await this.userExists(user.email);
+    if (existingUser) {
+      throw CustomError.invalid("User already exists.");
+    }
     const result = await this.collection.insertOne({
       firstName: user.firstName,
       lastName: user.lastName,

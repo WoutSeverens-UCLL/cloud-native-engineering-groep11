@@ -20,10 +20,10 @@ export class UserService {
   }
 
   async createUser(user: User) {
-    const existingUser = await (await this.getRepo()).getUser(user.email);
-    if (existingUser) {
-      throw CustomError.invalid("User already exists");
-    }
+    // const existingUser = await (await this.getRepo()).getUser(user.email);
+    // if (existingUser) {
+    //   throw CustomError.invalid("User already exists");
+    // }
     const hashedPassword = await bcrypt.hash(user.password, 12);
     const createdUser = new User({
       firstName: user.firstName,
