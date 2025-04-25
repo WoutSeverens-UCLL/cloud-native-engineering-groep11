@@ -31,3 +31,10 @@ export type UserInput = {
   password: string;
   role: Role;
 };
+
+export type AuthenticationResponse ={
+  message: string;
+  token: string;
+  email: string;
+  role: Role;
+}

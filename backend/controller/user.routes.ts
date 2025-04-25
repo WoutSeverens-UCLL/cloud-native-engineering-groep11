@@ -56,4 +56,17 @@ userRouter.post(
   }
 );
 
+userRouter.post(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const  {email, password}  = req.body;
+      const authresponse = await UserService.getInstance().authenticate({email, password});
+      res.status(200).json(authresponse);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default userRouter;

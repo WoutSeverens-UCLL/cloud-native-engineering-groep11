@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRouter from "./controller/user.routes";
+import { expressjwt } from 'express-jwt';
 
 dotenv.config();
 
@@ -10,6 +11,15 @@ app.use(cors());
 app.use(express.json());
 
 const port = process.env.APP_PORT || 3000;
+
+app.use(
+  expressjwt({
+      secret: process.env.JWT_SECRET || 'default_secret',
+      algorithms: ['HS256'],
+  }).unless({
+      path: ['/status'],
+  })
+);
 
 app.use("/users", userRouter);
 
