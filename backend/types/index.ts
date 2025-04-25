@@ -1,4 +1,8 @@
-export type Role = "buyer" | "seller" | "admin";
+export enum Role {
+  BUYER = 'buyer',
+  ADMIN = 'admin',
+  SELLER = 'seller',
+}
 export type Category =
   | "electronics"
   | "clothing"
