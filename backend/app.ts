@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRouter from "./controller/user.routes";
+import { expressjwt } from 'express-jwt';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 dotenv.config();
 
@@ -10,6 +13,30 @@ app.use(cors());
 app.use(express.json());
 
 const port = process.env.APP_PORT || 3000;
+
+const swaggerOptions = {
+  definition: {
+      openapi: '3.0.0',
+      info: {
+          title: 'Shoppingcarts API',
+          version: '1.0.0',
+      },
+  },
+  apis: ['./controller/*.routes.ts'],
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use(
+  expressjwt({
+      secret: process.env.JWT_SECRET || 'default_secret',
+      algorithms: ['HS256'],
+  }).unless({
+      path: ['/status','/users/login', '/users/signup'],
+  })
+);
 
 app.use("/users", userRouter);
 

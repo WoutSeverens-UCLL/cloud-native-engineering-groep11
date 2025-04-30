@@ -1,4 +1,8 @@
-export type Role = "buyer" | "seller" | "admin";
+export enum Role {
+  BUYER = 'buyer',
+  ADMIN = 'admin',
+  SELLER = 'seller',
+}
 export type Category =
   | "electronics"
   | "clothing"
@@ -31,3 +35,10 @@ export type UserInput = {
   password: string;
   role: Role;
 };
+
+export type AuthenticationResponse ={
+  message: string;
+  token: string;
+  email: string;
+  role: Role;
+}
