@@ -97,16 +97,19 @@ userRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
  *             schema:
  *               $ref: '#/components/schemas/User'
  */
-userRouter.get("/:email", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const email = req.params.email;
-    const user = await UserService.getInstance().getUser(email);
-    res.status(200).json(user);
-  } catch (error: any) {
-    const errorMessage = error.message || "An unexpected error occurred";
-    res.status(400).json({ status: "error", errorMessage: errorMessage });
+userRouter.get(
+  "/:email",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const email = req.params.email;
+      const user = await UserService.getInstance().getUser(email);
+      res.status(200).json(user);
+    } catch (error: any) {
+      const errorMessage = error.message || "An unexpected error occurred";
+      res.status(400).json({ status: "error", errorMessage: errorMessage });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -126,16 +129,19 @@ userRouter.get("/:email", async (req: Request, res: Response, next: NextFunction
  *       200:
  *         description: Deleted user info
  */
-userRouter.get("/delete/:email", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const email = req.params.email;
-    const user = await UserService.getInstance().deleteUser(email);
-    res.status(200).json(user);
-  } catch (error: any) {
-    const errorMessage = error.message || "An unexpected error occurred";
-    res.status(400).json({ status: "error", errorMessage: errorMessage });
+userRouter.delete(
+  "/delete/:email",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const email = req.params.email;
+      const user = await UserService.getInstance().deleteUser(email);
+      res.status(200).json(user);
+    } catch (error: any) {
+      const errorMessage = error.message || "An unexpected error occurred";
+      res.status(400).json({ status: "error", errorMessage: errorMessage });
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -157,16 +163,19 @@ userRouter.get("/delete/:email", async (req: Request, res: Response, next: NextF
  *             schema:
  *               $ref: '#/components/schemas/User'
  */
-userRouter.post("/signup", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userInput = <UserInput>req.body;
-    const user = new User(userInput);
-    const createdUser = await UserService.getInstance().createUser(user);
-    res.status(200).json(createdUser);
-  } catch (error) {
-    next(error);
+userRouter.post(
+  "/signup",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userInput = <UserInput>req.body;
+      const user = new User(userInput);
+      const createdUser = await UserService.getInstance().createUser(user);
+      res.status(200).json(createdUser);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -192,14 +201,20 @@ userRouter.post("/signup", async (req: Request, res: Response, next: NextFunctio
  *       200:
  *         description: Auth response
  */
-userRouter.post("/login", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { email, password } = req.body;
-    const authresponse = await UserService.getInstance().authenticate({ email, password });
-    res.status(200).json(authresponse);
-  } catch (error) {
-    next(error);
+userRouter.post(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body;
+      const authresponse = await UserService.getInstance().authenticate({
+        email,
+        password,
+      });
+      res.status(200).json(authresponse);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export default userRouter;

@@ -8,6 +8,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - 27017:27017
 
   mongo-express:
     image: mongo-express
@@ -17,7 +19,10 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: root
-      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/admin
+      ME_CONFIG_SITE_URL: "http://localhost:8081"
+      ME_CONFIG_BASICAUTH_USERNAME: "test"  # Change this to a secure username
+      ME_CONFIG_BASICAUTH_PASSWORD: "test"
 
   backend:
     depends_on:
@@ -26,3 +31,4 @@ services:
     build: ./backend
     ports:
       - 3000:3000
+    entrypoint: ["sh", "-c", "sleep 10 && npm run seed && npm start"]

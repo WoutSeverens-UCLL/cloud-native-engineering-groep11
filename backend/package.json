@@ -4,7 +4,8 @@
   "main": "app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -L app.ts --delay 3"
+    "start": "nodemon -L app.ts --delay 3",
+    "seed": "ts-node ./util/seed.ts"
   },
   "nodemonConfig": {
     "ext": "ts",
