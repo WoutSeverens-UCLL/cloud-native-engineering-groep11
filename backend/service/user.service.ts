@@ -1,6 +1,6 @@
 import { CustomError } from "../model/custom-error";
 import { User } from "../model/user";
-import { MongoUserRepository } from "../repository/mongo-user-repository";
+import { CosmosUserRepository } from "../repository/cosmos-user-repository";
 import bcrypt from "bcrypt";
 import { AuthenticationResponse } from "../types";
 import generateSWToken from "../util/jwt";
@@ -16,14 +16,10 @@ export class UserService {
   }
 
   private async getRepo() {
-    return MongoUserRepository.getInstance();
+    return CosmosUserRepository.getInstance();
   }
 
   async createUser(user: User) {
-    // const existingUser = await (await this.getRepo()).getUser(user.email);
-    // if (existingUser) {
-    //   throw CustomError.invalid("User already exists");
-    // }
     const hashedPassword = await bcrypt.hash(user.password, 12);
     const createdUser = new User({
       firstName: user.firstName,
