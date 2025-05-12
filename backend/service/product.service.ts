@@ -1,6 +1,6 @@
 import { CustomError } from "../model/custom-error";
 import { Product } from "../model/product";
-import { MongoProductRepository } from "../repository/mongo-product-repository";
+import { CosmosProductRepository } from "../repository/cosmos-product-repository";
 
 export class ProductService {
   private static intance: ProductService;
@@ -13,7 +13,7 @@ export class ProductService {
   }
 
   private async getRepo() {
-    return MongoProductRepository.getInstance();
+    return CosmosProductRepository.getInstance();
   }
 
   async createProduct(product: Product) {
