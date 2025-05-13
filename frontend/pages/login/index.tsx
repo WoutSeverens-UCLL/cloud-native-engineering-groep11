@@ -1,20 +1,15 @@
-import Header from '@components/header';
-import UserLoginForm from '@components/users/UserLoginForm';
-import Head from 'next/head';
+import React from "react";
+import UserLoginForm from "@components/users/UserLoginForm";
+import Header from "@components/header";
 
-const Login: React.FC = () => {
+const Login = () => {
   return (
-    <>
-      <Head>
-        <title>Login</title>
-      </Head>
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
-      <main>
-        <section className="flex flex-col justify-center">
-          <UserLoginForm />
-        </section>
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <UserLoginForm />
       </main>
-    </>
+    </div>
   );
 };
 
