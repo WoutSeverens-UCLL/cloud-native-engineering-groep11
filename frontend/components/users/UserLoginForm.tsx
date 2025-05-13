@@ -80,9 +80,9 @@ const UserLoginForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-sm m-auto">
+    <div>
       <div>
-        <h3 className="px-0">Login</h3>
+        <h1>Login</h1>
       </div>
       {statusMessages && (
         <div className="row">
@@ -103,13 +103,12 @@ const UserLoginForm: React.FC = () => {
       )}
       <form onSubmit={handleSubmit}>
         <div>
-          <div className="block mb-2 text-sm font-medium">
+          <div>
             <div>
               <label
                 htmlFor="emailInput"
-                className="block mb-2 text-sm font-medium"
               >
-                "Email:"
+                Email:
               </label>
             </div>
             <input
@@ -117,36 +116,32 @@ const UserLoginForm: React.FC = () => {
               type="text"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
             />
-            {emailError && <div className="text-red-800 ">{emailError}</div>}
+            {emailError && <div>{emailError}</div>}
           </div>
         </div>
-        <div className="mt-2">
+        <div>
           <div>
             <label
               htmlFor="passwordInput"
-              className="block mb-2 text-sm font-medium"
             >
-              "Password:"
+              Password:
             </label>
           </div>
-          <div className="block mb-2 text-sm font-medium">
+          <div>
             <input
               id="passwordInput"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
             />
             {passwordError && (
-              <div className=" text-red-800">{passwordError}</div>
+              <div>{passwordError}</div>
             )}
           </div>
         </div>
-
-        <div className="row">
-          <button type="submit">"Login"</button>
+        <div style={{ marginTop: "1rem" }}>
+          <button type="submit">Login</button>
         </div>
       </form>
     </div>

@@ -27,9 +27,11 @@ const Header: React.FC = () => {
                 <Link href="/">
                     Home
                 </Link>
-                <Link href="/users">
-                    Users
-                </Link>
+                {loggedInUser && (
+                    <Link href="/users">
+                        Users
+                    </Link>
+                )}
                 {!loggedInUser && (
                     <Link
                         href="/login">

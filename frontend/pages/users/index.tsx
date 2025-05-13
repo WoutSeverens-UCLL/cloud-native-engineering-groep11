@@ -5,16 +5,27 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { User } from "types";
 
-const Books: React.FC = () => {
+const Users: React.FC = () => {
     const [users, setUsers] = useState<Array<User>>();
     const [error, setError] = useState<string>();
 
     const getAllUsers = async () => {
+        setError('');
         const response = await UserService.getAllUsers();
+
+    if (!response.ok) {
+        if (response.status === 401) {
+            setError(
+                'You are not authorized to view this page. Please login first.'
+            );
+        } else {
+            setError(response.statusText);
+        }
+    } else {
         const users = await response.json();
         setUsers(users);
-        setError(users.message);
-    };
+    }
+  };
 
     useEffect(() => {
         getAllUsers();
@@ -41,4 +52,4 @@ const Books: React.FC = () => {
     );
 };
 
-export default Books;
+export default Users;

@@ -6,7 +6,7 @@ const Home: React.FC = () => {
         <>
             <Head>Shoppy
                 <title>Soppy</title>
-                <meta name="description" content="BookMates app" />
+                <meta name="description" content="Shoppy app" />
                 <meta
                     name="viewport"
                     content="width=device-width, initial-scale=1"
