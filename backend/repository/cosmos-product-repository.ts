@@ -18,7 +18,7 @@ interface CosmosDocument {
   stock: number;
   features?: string[];
   reviews?: Review[];
-  sellerId?: string;
+  sellerId: string;
 }
 
 export class CosmosProductRepository {
@@ -30,15 +30,8 @@ export class CosmosProductRepository {
       !document.name ||
       !document.description ||
       !document.price ||
-      !document.brand ||
-      !document.images ||
-      !document.rating ||
-      !document.colors ||
-      !document.sizes ||
       !document.category ||
       !document.stock ||
-      !document.features ||
-      !document.reviews ||
       !document.sellerId
     ) {
       throw CustomError.internal("Invalid product document.");
@@ -116,18 +109,17 @@ export class CosmosProductRepository {
       sellerId: product.sellerId,
     });
 
-    if (result && result.statusCode >= 200 && result.statusCode < 400) {
-      if (!result.resource?.id) {
-        throw CustomError.internal("Product ID is undefined.");
-      }
-      return this.getProduct(result.resource.id);
-    } else {
-      throw CustomError.internal("Could not create product.");
+    if (!result.resource || !result.resource.id) {
+      throw CustomError.internal(
+        "Could not create product. Resource or ID missing."
+      );
     }
+
+    return this.getProduct(result.resource.id, product.sellerId);
   }
 
-  async getProduct(id: string): Promise<Product> {
-    const { resource } = await this.container.item(id, id).read();
+  async getProduct(id: string, sellerId: string): Promise<Product> {
+    const { resource } = await this.container.item(id, sellerId).read();
     if (!resource) {
       throw CustomError.notFound("Product not found.");
     }
@@ -145,7 +137,7 @@ export class CosmosProductRepository {
   }
 
   async updateProduct(id: string, product: Product): Promise<Product> {
-    const result = await this.container.item(id, id).replace({
+    const result = await this.container.item(id, product.sellerId).replace({
       id,
       ...product,
     });
@@ -153,11 +145,11 @@ export class CosmosProductRepository {
     if (result.statusCode !== 200) {
       throw CustomError.notFound("Product not found.");
     }
-    return this.getProduct(id);
+    return this.getProduct(id, product.sellerId);
   }
 
-  async deleteProduct(id: string): Promise<boolean> {
-    const result = await this.container.item(id, id).delete();
+  async deleteProduct(id: string, sellerId: string): Promise<boolean> {
+    const result = await this.container.item(id, sellerId).delete();
     return result.statusCode === 204;
   }
 }
