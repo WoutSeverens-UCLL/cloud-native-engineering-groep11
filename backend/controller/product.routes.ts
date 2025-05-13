@@ -116,7 +116,7 @@ productRouter.get(
 
 /**
  * @swagger
- * /products/{id}:
+ * /products/{id}/{sellerId}:
  *   get:
  *     summary: Get a product by ID
  *     tags: [Product]
@@ -129,6 +129,12 @@ productRouter.get(
  *         schema:
  *           type: string
  *         description: The product ID
+ *       - in: path
+ *         name: sellerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The seller ID
  *     responses:
  *       200:
  *         description: A single product
@@ -138,11 +144,12 @@ productRouter.get(
  *               $ref: '#/components/schemas/Product'
  */
 productRouter.get(
-  "/:id",
+  "/:id/:sellerId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const product = await ProductService.getInstance().getProduct(
-        req.params.id
+        req.params.id,
+        req.params.sellerId
       );
       res.status(200).json(product);
     } catch (error) {
@@ -205,12 +212,24 @@ productRouter.post(
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Product not found
+ *
  */
 productRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const product = new Product(req.body);
+      const product = new Product({ ...req.body, id: req.params.id });
       const updatedProduct = await ProductService.getInstance().updateProduct(
         req.params.id,
         product
@@ -224,7 +243,7 @@ productRouter.put(
 
 /**
  * @swagger
- * /products/{id}:
+ * /products/{id}/{sellerId}:
  *   delete:
  *     summary: Delete a product by ID
  *     tags: [Product]
@@ -237,6 +256,12 @@ productRouter.put(
  *         schema:
  *           type: string
  *         description: The product ID
+ *       - in: path
+ *         name: sellerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The seller ID
  *     responses:
  *       200:
  *         description: The deleted product
@@ -246,11 +271,12 @@ productRouter.put(
  *               $ref: '#/components/schemas/Product'
  */
 productRouter.delete(
-  "/:id",
+  "/:id/:sellerId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deletedProduct = await ProductService.getInstance().deleteProduct(
-        req.params.id
+        req.params.id,
+        req.params.sellerId
       );
       res.status(200).json(deletedProduct);
     } catch (error) {

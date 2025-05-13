@@ -1,6 +1,6 @@
 import { CustomError } from "../model/custom-error";
 import { Review } from "../model/review";
-import { MongoReviewRepository } from "../repository/mongo-review-repository";
+import { CosmosReviewRepository } from "../repository/cosmos-review-repository";
 
 export class ReviewService {
   private static instance: ReviewService;
@@ -13,7 +13,7 @@ export class ReviewService {
   }
 
   private async getRepo() {
-    return MongoReviewRepository.getInstance();
+    return CosmosReviewRepository.getInstance();
   }
 
   async createReview(review: Review) {
@@ -23,25 +23,25 @@ export class ReviewService {
       rating: review.rating,
       comment: review.comment,
     });
-    return (await this.getRepo()).create(createdReview);
+    return (await this.getRepo()).createReview(createdReview);
   }
 
   async getAllReviews() {
     return (await this.getRepo()).getAllReviews();
   }
 
-  async getReview(id: string) {
+  async getReview(id: string, productId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
     }
-    return (await this.getRepo()).getReview(id);
+    return (await this.getRepo()).getReview(id, productId);
   }
 
-  async deleteReview(id: string) {
+  async deleteReview(id: string, productId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
     }
-    return (await this.getRepo()).deleteReview(id);
+    return (await this.getRepo()).deleteReview(id, productId);
   }
 
   async updateReview(id: string, review: Review) {

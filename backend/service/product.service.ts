@@ -1,6 +1,6 @@
 import { CustomError } from "../model/custom-error";
 import { Product } from "../model/product";
-import { MongoProductRepository } from "../repository/mongo-product-repository";
+import { CosmosProductRepository } from "../repository/cosmos-product-repository";
 
 export class ProductService {
   private static intance: ProductService;
@@ -13,7 +13,7 @@ export class ProductService {
   }
 
   private async getRepo() {
-    return MongoProductRepository.getInstance();
+    return CosmosProductRepository.getInstance();
   }
 
   async createProduct(product: Product) {
@@ -35,29 +35,28 @@ export class ProductService {
     return (await this.getRepo()).createProduct(createdProduct);
   }
 
-    async getAllProducts() {
-        return (await this.getRepo()).getAllProducts();
-    }
+  async getAllProducts() {
+    return (await this.getRepo()).getAllProducts();
+  }
 
-    async getProduct(id: string) {
-        if (!id) {
-            throw CustomError.invalid("Id is invalid");
-        }
-        return (await this.getRepo()).getProduct(id);
+  async getProduct(id: string, sellerId: string) {
+    if (!id) {
+      throw CustomError.invalid("Id is invalid");
     }
+    return (await this.getRepo()).getProduct(id, sellerId);
+  }
 
-    async deleteProduct(id: string) {
-        if (!id) {
-            throw CustomError.invalid("Id is invalid");
-        }
-        return (await this.getRepo()).deleteProduct(id);
+  async deleteProduct(id: string, sellerId: string) {
+    if (!id) {
+      throw CustomError.invalid("Id is invalid");
     }
+    return (await this.getRepo()).deleteProduct(id, sellerId);
+  }
 
-    async updateProduct(id: string, product: Product) {
-        if (!id) {
-            throw CustomError.invalid("Id is invalid");
-        }
-        return (await this.getRepo()).updateProduct(id, product);
+  async updateProduct(id: string, product: Product) {
+    if (!id) {
+      throw CustomError.invalid("Id is invalid");
     }
-
+    return (await this.getRepo()).updateProduct(id, product);
+  }
 }
