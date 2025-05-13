@@ -80,12 +80,12 @@ export class CosmosUserRepository {
       throw CustomError.invalid("User already exists.");
     }
     const result = await this.container.items.create({
+      id: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       password: user.password,
       role: user.role,
-      partition: user.email.substring(0, 3),
     });
     if (result && result.statusCode >= 200 && result.statusCode < 400) {
       return this.getUser(user.email);
@@ -100,9 +100,7 @@ export class CosmosUserRepository {
   }
 
   async getUser(email: string): Promise<User> {
-    const { resource } = await this.container
-      .item(email, email.substring(0, 3))
-      .read();
+    const { resource } = await this.container.item(email, email).read();
     if (resource) {
       return this.toUser(resource);
     } else {
