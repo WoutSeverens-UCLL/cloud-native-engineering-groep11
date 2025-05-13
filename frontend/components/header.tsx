@@ -1,51 +1,191 @@
+import { Home, LogIn, LogOut, ShoppingCart, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { User } from "types";
 
-const Header: React.FC = () => {
-    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+const Header = () => {
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    useEffect(() => {
-        const loggedInUserString = sessionStorage.getItem('loggedInUser');
-        if (loggedInUserString !== null) {
-          setLoggedInUser(JSON.parse(loggedInUserString));
-        }
-      }, []);
-    
-      const handleClick = () => {
-        sessionStorage.removeItem('loggedInUser');
-        setLoggedInUser(null);
-      };
-    
-    return (
-        <header>
-            <a>
-                {" "}
-                Shoppy
-            </a>
-            <nav>
-                <Link href="/">
-                    Home
+  useEffect(() => {
+    const loggedInUserString = sessionStorage.getItem("loggedInUser");
+    if (loggedInUserString !== null) {
+      setLoggedInUser(JSON.parse(loggedInUserString));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("loggedInUser");
+    setLoggedInUser(null);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  return (
+    <header className="bg-gradient-to-r from-purple-700 to-indigo-800 text-white shadow-lg">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <ShoppingCart className="h-7 w-7" />
+            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-100">
+              Shopy
+            </span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
+
+            {loggedInUser && (
+              <>
+                <Link
+                  href="/users"
+                  className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+                >
+                  <Users className="h-4 w-4" />
+                  Users
                 </Link>
-                <Link href="/users">
-                    Users
+
+                <Link
+                  href="/products"
+                  className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Products
                 </Link>
-                {!loggedInUser && (
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-all"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
+            )}
+
+            {!loggedInUser && (
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-all"
+              >
+                <LogIn className="h-4 w-4" />
+                Login
+              </Link>
+            )}
+          </nav>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-white focus:outline-none"
+            aria-label="Toggle menu"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {isMenuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <nav className="md:hidden mt-3 pt-3 border-t border-white/10">
+            <ul className="flex flex-col space-y-3">
+              <li>
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Home className="h-4 w-4" />
+                  Home
+                </Link>
+              </li>
+
+              {loggedInUser && (
+                <>
+                  <li>
                     <Link
-                        href="/login">
-                        Login
+                      href="/users"
+                      className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Users className="h-4 w-4" />
+                      Users
                     </Link>
-                )}
-                {loggedInUser && (
+                  </li>
+                  <li>
                     <Link
-                        href="/login"
-                        onClick={handleClick}>
-                        Logout
+                      href="/products"
+                      className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Products
                     </Link>
-                )}  
-            </nav>  
-        </header>
-    );
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full text-left hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </button>
+                  </li>
+                </>
+              )}
+
+              {!loggedInUser && (
+                <li>
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <LogIn className="h-4 w-4" />
+                    Login
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </nav>
+        )}
+      </div>
+    </header>
+  );
 };
 
 export default Header;
