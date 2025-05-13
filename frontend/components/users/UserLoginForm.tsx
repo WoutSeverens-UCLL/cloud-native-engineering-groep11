@@ -3,6 +3,18 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import UserService from "@services/UserService";
 import { StatusMessage } from "@types";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Alert, AlertDescription } from "../ui/alert";
 
 const UserLoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +22,7 @@ const UserLoginForm: React.FC = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const clearErrors = () => {
@@ -79,76 +92,108 @@ const UserLoginForm: React.FC = () => {
     }
   };
 
-  return (
-    <div className="max-w-sm m-auto">
-      <div>
-        <h3 className="px-0">Login</h3>
-      </div>
-      {statusMessages && (
-        <div className="row">
-          <ul className="list-none mb-3 mx-auto ">
-            {statusMessages.map(({ message, type }, index) => (
-              <li
-                key={index}
-                className={classNames({
-                  " text-red-800": type === "error",
-                  "text-green-800": type === "success",
-                })}
-              >
-                {message}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <div className="block mb-2 text-sm font-medium">
-            <div>
-              <label
-                htmlFor="emailInput"
-                className="block mb-2 text-sm font-medium"
-              >
-                "Email:"
-              </label>
-            </div>
-            <input
-              id="emailInput"
-              type="text"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
-            />
-            {emailError && <div className="text-red-800 ">{emailError}</div>}
-          </div>
-        </div>
-        <div className="mt-2">
-          <div>
-            <label
-              htmlFor="passwordInput"
-              className="block mb-2 text-sm font-medium"
-            >
-              "Password:"
-            </label>
-          </div>
-          <div className="block mb-2 text-sm font-medium">
-            <input
-              id="passwordInput"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue:500 block w-full p-2.5"
-            />
-            {passwordError && (
-              <div className=" text-red-800">{passwordError}</div>
-            )}
-          </div>
-        </div>
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-        <div className="row">
-          <button type="submit">"Login"</button>
-        </div>
-      </form>
+  return (
+    <div className="max-w-md mx-auto mt-12">
+      <Card className="shadow-lg border-t-4 border-t-purple-700">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            Login to Shopy
+          </CardTitle>
+        </CardHeader>
+
+        {statusMessages.length > 0 && (
+          <div className="px-6">
+            {statusMessages.map(({ message, type }, index) => (
+              <Alert
+                key={index}
+                variant={type === "error" ? "destructive" : "default"}
+                className={
+                  type === "success"
+                    ? "bg-green-50 border-green-300 text-green-800"
+                    : ""
+                }
+              >
+                <AlertDescription>{message}</AlertDescription>
+              </Alert>
+            ))}
+          </div>
+        )}
+
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="pl-10"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              {emailError && (
+                <p className="text-sm text-destructive">{emailError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="pl-10"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+                  onClick={togglePasswordVisibility}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-sm text-destructive">{passwordError}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full text-white text font-bold  bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
+            >
+              Sign In
+            </Button>
+          </form>
+        </CardContent>
+
+        <CardFooter className="flex flex-col">
+          <p className="text-sm text-center text-gray-500">
+            Don't have an account?{" "}
+            <a
+              href="/signup"
+              className="text-purple-700 hover:text-purple-800 font-medium"
+            >
+              Sign up
+            </a>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
