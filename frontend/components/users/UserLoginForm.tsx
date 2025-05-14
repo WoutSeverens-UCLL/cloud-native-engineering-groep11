@@ -139,7 +139,7 @@ const UserLoginForm: React.FC = () => {
                 />
               </div>
               {emailError && (
-                <p className="text-sm text-destructive">{emailError}</p>
+                <p className="text-sm text-red-600">{emailError}</p>
               )}
             </div>
 
@@ -162,24 +162,24 @@ const UserLoginForm: React.FC = () => {
                   tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
+                    <EyeOff className="h-5 w-5 cursor-pointer" />
                   ) : (
-                    <Eye className="h-5 w-5" />
+                    <Eye className="h-5 w-5 cursor-pointer" />
                   )}
                 </button>
               </div>
               {passwordError && (
-                <p className="text-sm text-destructive">{passwordError}</p>
+                <p className="text-sm text-red-600">{passwordError}</p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full text-white text font-bold  bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
+              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-bold cursor-pointer"
             >
               Sign In
             </Button>
-          </form>
+          </form> 
         </CardContent>
 
         <CardFooter className="flex flex-col">
