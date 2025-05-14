@@ -2,7 +2,6 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import UserService from "@services/UserService";
-import { StatusMessage } from "@types";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import {
   Card,
@@ -15,6 +14,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Alert, AlertDescription } from "../ui/alert";
+import { StatusMessage } from "types";
 
 const UserLoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
