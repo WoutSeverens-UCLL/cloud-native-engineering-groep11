@@ -1,11 +1,13 @@
 import { Home, LogIn, LogOut, ShoppingCart, Users } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { User } from "types";
 
 const Header = () => {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const loggedInUserString = sessionStorage.getItem("loggedInUser");
@@ -17,6 +19,9 @@ const Header = () => {
   const handleLogout = () => {
     sessionStorage.removeItem("loggedInUser");
     setLoggedInUser(null);
+    setTimeout(() => {
+      router.push("/login");
+    }, 500);
   };
 
   const toggleMenu = () => {
