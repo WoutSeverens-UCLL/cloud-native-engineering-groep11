@@ -78,18 +78,17 @@ export class CosmosReviewRepository {
       comment: review.comment,
     });
 
-    if (result && result.statusCode === 200 && result.statusCode < 400) {
-      if (!result.resource?.id) {
-        throw CustomError.internal("Review ID is undefined.");
-      }
-      return this.getReview(result.resource.id);
-    } else {
-      throw CustomError.internal("Could not create review.");
+    if (!result.resource || !result.resource.id) {
+      throw CustomError.internal(
+        "Could not create review. Resource or ID missing."
+      );
     }
+
+    return this.getReview(result.resource.id, review.productId);
   }
 
-  async getReview(id: string): Promise<Review> {
-    const { resource } = await this.container.item(id, id).read();
+  async getReview(id: string, productId: string): Promise<Review> {
+    const { resource } = await this.container.item(id, productId).read();
     if (!resource) {
       throw CustomError.notFound("Review not found.");
     }
@@ -141,18 +140,18 @@ export class CosmosReviewRepository {
   }
 
   async updateReview(id: string, review: Review): Promise<Review> {
-    const result = await this.container.item(id, id).replace({
+    const result = await this.container.item(id, review.productId).replace({
       id,
       ...review,
     });
     if (result.statusCode !== 200) {
       throw CustomError.notFound("Review not found.");
     }
-    return this.getReview(id);
+    return this.getReview(id, review.productId);
   }
 
-  async deleteReview(id: string): Promise<boolean> {
-    const result = await this.container.item(id, id).delete();
+  async deleteReview(id: string, productId: string): Promise<boolean> {
+    const result = await this.container.item(id, productId).delete();
     return result.statusCode === 204;
   }
 }

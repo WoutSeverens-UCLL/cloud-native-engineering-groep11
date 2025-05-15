@@ -18,7 +18,7 @@ interface CosmosDocument {
   stock: number;
   features?: string[];
   reviews?: Review[];
-  sellerId?: string;
+  sellerId: string;
 }
 
 export class CosmosProductRepository {
@@ -30,15 +30,8 @@ export class CosmosProductRepository {
       !document.name ||
       !document.description ||
       !document.price ||
-      !document.brand ||
-      !document.images ||
-      !document.rating ||
-      !document.colors ||
-      !document.sizes ||
       !document.category ||
       !document.stock ||
-      !document.features ||
-      !document.reviews ||
       !document.sellerId
     ) {
       throw CustomError.internal("Invalid product document.");
@@ -62,10 +55,17 @@ export class CosmosProductRepository {
     });
   }
 
-  constructor(private readonly container: Container) {
-    if (!container) {
-      throw new Error("User Cosmos DB container is required.");
+  constructor(
+    private readonly container: Container,
+    private readonly reviewContainer: Container
+  ) {
+    if (!container || !reviewContainer) {
+      throw new Error(
+        "Both product and review Cosmos DB containers are required."
+      );
     }
+    this.container = container;
+    this.reviewContainer = reviewContainer;
   }
 
   static async getInstance() {
@@ -74,6 +74,7 @@ export class CosmosProductRepository {
       const endpoint = process.env.COSMOS_ENDPOINT;
       const databaseName = process.env.COSMOS_DATABASE_NAME;
       const containerName = "Products";
+      const reviewContainerName = "Reviews";
       const partitionKeyPath = ["/sellerId"];
 
       if (!key || !endpoint) {
@@ -94,7 +95,15 @@ export class CosmosProductRepository {
         },
       });
 
-      this.instance = new CosmosProductRepository(container);
+      const { container: reviewContainer } =
+        await database.containers.createIfNotExists({
+          id: reviewContainerName,
+          partitionKey: {
+            paths: ["/productId"],
+          },
+        });
+
+      this.instance = new CosmosProductRepository(container, reviewContainer);
     }
     return this.instance;
   }
@@ -116,18 +125,17 @@ export class CosmosProductRepository {
       sellerId: product.sellerId,
     });
 
-    if (result && result.statusCode >= 200 && result.statusCode < 400) {
-      if (!result.resource?.id) {
-        throw CustomError.internal("Product ID is undefined.");
-      }
-      return this.getProduct(result.resource.id);
-    } else {
-      throw CustomError.internal("Could not create product.");
+    if (!result.resource || !result.resource.id) {
+      throw CustomError.internal(
+        "Could not create product. Resource or ID missing."
+      );
     }
+
+    return this.getProduct(result.resource.id, product.sellerId);
   }
 
-  async getProduct(id: string): Promise<Product> {
-    const { resource } = await this.container.item(id, id).read();
+  async getProduct(id: string, sellerId: string): Promise<Product> {
+    const { resource } = await this.container.item(id, sellerId).read();
     if (!resource) {
       throw CustomError.notFound("Product not found.");
     }
@@ -135,17 +143,43 @@ export class CosmosProductRepository {
   }
 
   async getAllProducts(): Promise<Product[]> {
-    const { resources } = await this.container.items
+    const { resources: products } = await this.container.items
       .query("SELECT * FROM c")
       .fetchAll();
-    if (!resources || resources.length === 0) {
+
+    if (!products || products.length === 0) {
       throw CustomError.notFound("No products found.");
     }
-    return resources.map((doc) => this.toProduct(doc));
+
+    // Reviews ophalen
+    const { resources: reviews } = await this.reviewContainer.items
+      .query("SELECT c.productId, c.rating FROM c")
+      .fetchAll();
+
+    // Gemiddelde ratings berekenen per productId
+    const ratingMap = new Map<string, { total: number; count: number }>();
+    for (const review of reviews) {
+      if (!review.productId || typeof review.rating !== "number") continue;
+      const entry = ratingMap.get(review.productId) || { total: 0, count: 0 };
+      entry.total += review.rating;
+      entry.count += 1;
+      ratingMap.set(review.productId, entry);
+    }
+
+    // Producten converteren met hun gemiddelde rating
+    return products.map((doc) => {
+      const base = this.toProduct(doc);
+      const rating = ratingMap.get(base.id || "");
+      const averageRating =
+        rating && rating.count > 0
+          ? parseFloat((rating.total / rating.count).toFixed(1))
+          : 0;
+      return new Product({ ...base, rating: averageRating });
+    });
   }
 
   async updateProduct(id: string, product: Product): Promise<Product> {
-    const result = await this.container.item(id, id).replace({
+    const result = await this.container.item(id, product.sellerId).replace({
       id,
       ...product,
     });
@@ -153,11 +187,11 @@ export class CosmosProductRepository {
     if (result.statusCode !== 200) {
       throw CustomError.notFound("Product not found.");
     }
-    return this.getProduct(id);
+    return this.getProduct(id, product.sellerId);
   }
 
-  async deleteProduct(id: string): Promise<boolean> {
-    const result = await this.container.item(id, id).delete();
+  async deleteProduct(id: string, sellerId: string): Promise<boolean> {
+    const result = await this.container.item(id, sellerId).delete();
     return result.statusCode === 204;
   }
 }

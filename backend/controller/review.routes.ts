@@ -82,7 +82,7 @@ reviewRouter.get(
 
 /**
  * @swagger
- * /reviews/{id}:
+ * /reviews/{id}/{productId}:
  *   get:
  *     summary: Get a review by ID
  *     tags: [Review]
@@ -93,6 +93,12 @@ reviewRouter.get(
  *         in: path
  *         required: true
  *         description: Review ID
+ *         schema:
+ *           type: string
+ *       - name: productId
+ *         in: path
+ *         required: true
+ *         description: Product ID
  *         schema:
  *           type: string
  *     responses:
@@ -108,10 +114,13 @@ reviewRouter.get(
  *         description: Review not found
  */
 reviewRouter.get(
-  "/:id",
+  "/:id/:productId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const review = await ReviewService.getInstance().getReview(req.params.id);
+      const review = await ReviewService.getInstance().getReview(
+        req.params.id,
+        req.params.productId
+      );
       res.status(200).json(review);
     } catch (error) {
       next(error);
@@ -195,7 +204,7 @@ reviewRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const review = new Review(req.body);
+      const review = new Review({ ...req.body, id: req.params.id });
       const updatedReview = await ReviewService.getInstance().updateReview(
         req.params.id,
         review
@@ -209,7 +218,7 @@ reviewRouter.put(
 
 /**
  * @swagger
- * /reviews/{id}:
+ * /reviews/{id}/{productId}:
  *   delete:
  *     summary: Delete a review by ID
  *     tags: [Review]
@@ -222,6 +231,12 @@ reviewRouter.put(
  *         description: Review ID
  *         schema:
  *           type: string
+ *       - name: productId
+ *         in: path
+ *         required: true
+ *         description: Product ID
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Review deleted successfully
@@ -229,13 +244,28 @@ reviewRouter.put(
  *         description: Review not found
  */
 reviewRouter.delete(
-  "/:id",
+  "/:id/:productId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const deletedReview = await ReviewService.getInstance().deleteReview(
-        req.params.id
+        req.params.id,
+        req.params.productId
       );
       res.status(200).json(deletedReview);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+reviewRouter.get(
+  "/:productId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reviews = await ReviewService.getInstance().getReviewsByProductId(
+        req.params.productId
+      );
+      res.status(200).json(reviews);
     } catch (error) {
       next(error);
     }

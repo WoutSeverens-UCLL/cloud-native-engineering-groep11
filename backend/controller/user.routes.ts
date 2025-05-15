@@ -114,7 +114,7 @@ userRouter.get(
 /**
  * @swagger
  * /users/delete/{email}:
- *   get:
+ *   delete:
  *     summary: Delete a user by email
  *     tags: [User]
  *     security:

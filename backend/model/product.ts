@@ -15,7 +15,7 @@ interface ProductParams {
   stock: number;
   features?: string[];
   reviews?: Review[];
-  sellerId?: string;
+  sellerId: string;
 }
 
 export class Product {
@@ -32,7 +32,7 @@ export class Product {
   readonly stock: number;
   readonly features: string[];
   readonly reviews: Review[];
-  readonly sellerId?: string;
+  readonly sellerId: string;
 
   constructor({
     id,

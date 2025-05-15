@@ -1,38 +1,56 @@
-import classNames from "classnames";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
-import UserService from "@services/UserService";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Alert, AlertDescription } from "@components/ui/alert";
+import { Button } from "@components/ui/button";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
-} from "../ui/card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Alert, AlertDescription } from "../ui/alert";
+  CardHeader,
+  CardTitle,
+} from "@components/ui/card";
+import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
+import UserService from "@services/UserService";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { StatusMessage } from "types";
 
-const UserLoginForm: React.FC = () => {
+const UserSignupPage: React.FC = () => {
+  const [firstName, setFirstName] = useState("");
+  const [firstNameError, setFirstNameError] = useState<string | null>(null);
+  const [lastName, setLastName] = useState("");
+  const [lastNameError, setLastNameError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const [role, setRole] = useState("");
+  const [roleError, setRoleError] = useState<string | null>(null);
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const clearErrors = () => {
+    setFirstNameError(null);
+    setLastNameError(null);
     setEmailError(null);
     setPasswordError(null);
+    setRoleError(null);
     setStatusMessages([]);
   };
 
   const validate = (): boolean => {
     let result = true;
+
+    if (!firstName || firstName.trim() === "") {
+      setFirstNameError("First name is required");
+      result = false;
+    }
+
+    if (!lastName || lastName.trim() === "") {
+      setLastNameError("Last name is required");
+      result = false;
+    }
 
     if (!email || email.trim() === "") {
       setEmailError("Email is required");
@@ -44,10 +62,15 @@ const UserLoginForm: React.FC = () => {
       result = false;
     }
 
+    if (!role || role.trim() === "") {
+      setRoleError("Role is required");
+      result = false;
+    }
+
     return result;
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     clearErrors();
@@ -56,36 +79,23 @@ const UserLoginForm: React.FC = () => {
       return;
     }
 
-    const user = { email: email, password };
-    const response = await UserService.loginUser(user);
+    const user = { firstName, lastName, email, password, role };
+    const response = await UserService.signupUser(user);
 
     if (response.status === 200) {
       setStatusMessages([
         {
-          message: "Login succesful. Redirecting to homepage...",
+          message: "Signup successful. Redirecting to loginpage...",
           type: "success",
         },
       ]);
-
-      const user = await response.json();
-      sessionStorage.setItem(
-        "loggedInUser",
-        JSON.stringify({
-          token: user.token,
-          email: user.email,
-          role: user.role,
-        })
-      );
       setTimeout(() => {
-        router.push("/");
+        router.push("/login");
       }, 2000);
-    } else if (response.status === 401) {
-      const { errorMessage } = await response.json();
-      setStatusMessages([{ message: errorMessage, type: "error" }]);
     } else {
       setStatusMessages([
         {
-          message: "An error has occurred. Please try again later.",
+          message: "Signup failed. Please try again.",
           type: "error",
         },
       ]);
@@ -101,7 +111,7 @@ const UserLoginForm: React.FC = () => {
       <Card className="shadow-lg border-t-4 border-t-purple-700">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Login to Shopy
+            Sign up to Shopy
           </CardTitle>
         </CardHeader>
 
@@ -125,6 +135,40 @@ const UserLoginForm: React.FC = () => {
 
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <div className="relative">
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder="Enter your first name"
+                  className="pl-10"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              {firstNameError && (
+                <p className="text-sm text-red-600">{firstNameError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <div className="relative">
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Enter your last name"
+                  className="pl-10"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+              {lastNameError && (
+                <p className="text-sm text-red-600">{lastNameError}</p>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -173,23 +217,38 @@ const UserLoginForm: React.FC = () => {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <div className="relative">
+                <Input
+                  id="role"
+                  type="text"
+                  placeholder="Enter your role"
+                  className="pl-10"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                />
+              </div>
+              {roleError && <p className="text-sm text-red-600">{roleError}</p>}
+            </div>
+
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-bold cursor-pointer"
             >
-              Sign In
+              Sign Up
             </Button>
-          </form> 
+          </form>
         </CardContent>
 
         <CardFooter className="flex flex-col">
           <p className="text-sm text-center text-gray-500">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <a
-              href="/signup"
+              href="/login"
               className="text-purple-700 hover:text-purple-800 font-medium"
             >
-              Sign up
+              Login
             </a>
           </p>
         </CardFooter>
@@ -198,4 +257,4 @@ const UserLoginForm: React.FC = () => {
   );
 };
 
-export default UserLoginForm;
+export default UserSignupPage;

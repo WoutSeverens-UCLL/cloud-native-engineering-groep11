@@ -30,18 +30,25 @@ export class ReviewService {
     return (await this.getRepo()).getAllReviews();
   }
 
-  async getReview(id: string) {
+  async getReview(id: string, productId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
     }
-    return (await this.getRepo()).getReview(id);
+    return (await this.getRepo()).getReview(id, productId);
   }
 
-  async deleteReview(id: string) {
+  async getReviewsByProductId(productId: string) {
+    if (!productId) {
+      throw CustomError.invalid("Product ID is invalid");
+    }
+    return (await this.getRepo()).getReviewsByProductId(productId);
+  }
+
+  async deleteReview(id: string, productId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
     }
-    return (await this.getRepo()).deleteReview(id);
+    return (await this.getRepo()).deleteReview(id, productId);
   }
 
   async updateReview(id: string, review: Review) {
