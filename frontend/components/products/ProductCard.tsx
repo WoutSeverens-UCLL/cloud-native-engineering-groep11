@@ -12,7 +12,7 @@ interface Props {
 
 const ProductCard: React.FC<Props> = ({ product }) => {
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-gray-300">
       <CardHeader className="p-0">
         <Link href={`/products/${product.id}/${product.sellerId}`}>
           <AspectRatio ratio={1 / 1} className="bg-gray-100">
