@@ -37,6 +37,13 @@ export class ReviewService {
     return (await this.getRepo()).getReview(id, productId);
   }
 
+  async getReviewsByProductId(productId: string) {
+    if (!productId) {
+      throw CustomError.invalid("Product ID is invalid");
+    }
+    return (await this.getRepo()).getReviewsByProductId(productId);
+  }
+
   async deleteReview(id: string, productId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
