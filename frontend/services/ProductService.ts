@@ -3,6 +3,16 @@ const getToken = (): string => {
   return loggedInUserString ? JSON.parse(loggedInUserString).token : "";
 };
 
+const getAllProducts = () => {
+  return fetch(process.env.NEXT_PUBLIC_API_URL + "/products", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+};
+
 const getProduct = (id: string, sellerId: string) => {
   return fetch(
     process.env.NEXT_PUBLIC_API_URL + `/products/${id}/${sellerId}`,
@@ -17,7 +27,8 @@ const getProduct = (id: string, sellerId: string) => {
 };
 
 const ProductService = {
-    getProduct,
+  getAllProducts,
+  getProduct,
 };
 
 export default ProductService;
