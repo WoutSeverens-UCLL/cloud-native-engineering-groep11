@@ -258,4 +258,18 @@ reviewRouter.delete(
   }
 );
 
+reviewRouter.get(
+  "/:productId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const reviews = await ReviewService.getInstance().getReviewsByProductId(
+        req.params.productId
+      );
+      res.status(200).json(reviews);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export { reviewRouter };
