@@ -55,10 +55,17 @@ export class CosmosProductRepository {
     });
   }
 
-  constructor(private readonly container: Container) {
-    if (!container) {
-      throw new Error("User Cosmos DB container is required.");
+  constructor(
+    private readonly container: Container,
+    private readonly reviewContainer: Container
+  ) {
+    if (!container || !reviewContainer) {
+      throw new Error(
+        "Both product and review Cosmos DB containers are required."
+      );
     }
+    this.container = container;
+    this.reviewContainer = reviewContainer;
   }
 
   static async getInstance() {
@@ -67,6 +74,7 @@ export class CosmosProductRepository {
       const endpoint = process.env.COSMOS_ENDPOINT;
       const databaseName = process.env.COSMOS_DATABASE_NAME;
       const containerName = "Products";
+      const reviewContainerName = "Reviews";
       const partitionKeyPath = ["/sellerId"];
 
       if (!key || !endpoint) {
@@ -87,7 +95,15 @@ export class CosmosProductRepository {
         },
       });
 
-      this.instance = new CosmosProductRepository(container);
+      const { container: reviewContainer } =
+        await database.containers.createIfNotExists({
+          id: reviewContainerName,
+          partitionKey: {
+            paths: ["/productId"],
+          },
+        });
+
+      this.instance = new CosmosProductRepository(container, reviewContainer);
     }
     return this.instance;
   }
@@ -127,13 +143,39 @@ export class CosmosProductRepository {
   }
 
   async getAllProducts(): Promise<Product[]> {
-    const { resources } = await this.container.items
+    const { resources: products } = await this.container.items
       .query("SELECT * FROM c")
       .fetchAll();
-    if (!resources || resources.length === 0) {
+
+    if (!products || products.length === 0) {
       throw CustomError.notFound("No products found.");
     }
-    return resources.map((doc) => this.toProduct(doc));
+
+    // Reviews ophalen
+    const { resources: reviews } = await this.reviewContainer.items
+      .query("SELECT c.productId, c.rating FROM c")
+      .fetchAll();
+
+    // Gemiddelde ratings berekenen per productId
+    const ratingMap = new Map<string, { total: number; count: number }>();
+    for (const review of reviews) {
+      if (!review.productId || typeof review.rating !== "number") continue;
+      const entry = ratingMap.get(review.productId) || { total: 0, count: 0 };
+      entry.total += review.rating;
+      entry.count += 1;
+      ratingMap.set(review.productId, entry);
+    }
+
+    // Producten converteren met hun gemiddelde rating
+    return products.map((doc) => {
+      const base = this.toProduct(doc);
+      const rating = ratingMap.get(base.id || "");
+      const averageRating =
+        rating && rating.count > 0
+          ? parseFloat((rating.total / rating.count).toFixed(1))
+          : 0;
+      return new Product({ ...base, rating: averageRating });
+    });
   }
 
   async updateProduct(id: string, product: Product): Promise<Product> {
