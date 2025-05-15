@@ -56,7 +56,7 @@ const ProductsPage = () => {
 
         <div className="mb-8 flex flex-col md:flex-row md:items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground text-gray-500" />
             <Input
               type="text"
               placeholder="Search products..."
@@ -68,7 +68,7 @@ const ProductsPage = () => {
           <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
                 selectedCategory === null
                   ? "bg-purple-700 text-white"
                   : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
@@ -80,7 +80,7 @@ const ProductsPage = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
                   selectedCategory === category
                     ? "bg-purple-700 text-white"
                     : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
