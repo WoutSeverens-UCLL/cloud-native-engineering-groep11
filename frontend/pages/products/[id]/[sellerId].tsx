@@ -1,4 +1,5 @@
 import Header from "@components/header";
+import ReviewSection from "@components/reviews/ReviewSection";
 import { Button } from "@components/ui/button";
 import { Separator } from "@components/ui/separator";
 import ProductService from "@services/ProductService";
@@ -6,7 +7,7 @@ import { ArrowLeft, ShoppingCart, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Product } from "types";
+import { Product, User } from "types";
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -14,6 +15,15 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
+
+  useEffect(() => {
+    const loggedInUserString = sessionStorage.getItem("loggedInUser");
+    if (loggedInUserString !== null) {
+      setLoggedInUser(JSON.parse(loggedInUserString));
+    }
+  }, []);
 
   useEffect(() => {
     if (!id || !sellerId) return;
@@ -116,7 +126,9 @@ const ProductDetail = () => {
                 <div className="flex items-center ml-auto">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold ml-1">
-                    {product.rating}
+                    {averageRating !== null
+                      ? averageRating.toFixed(1)
+                      : 0}
                   </span>
                 </div>
               </div>
@@ -157,6 +169,11 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+        <ReviewSection
+          productId={product.id ?? ""}
+          userId={loggedInUser?.email ?? ""}
+          onAverageRatingUpdate={setAverageRating}
+        />
       </main>
     </div>
   );
