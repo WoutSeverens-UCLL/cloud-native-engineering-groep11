@@ -1,6 +1,7 @@
 import Header from "@components/header";
 import ReviewSection from "@components/reviews/ReviewSection";
 import { Button } from "@components/ui/button";
+import { Card, CardContent } from "@components/ui/card";
 import { Separator } from "@components/ui/separator";
 import ProductService from "@services/ProductService";
 import { ArrowLeft, ShoppingCart, Star } from "lucide-react";
@@ -17,6 +18,7 @@ const ProductDetail = () => {
   const [error, setError] = useState("");
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const loggedInUserString = sessionStorage.getItem("loggedInUser");
@@ -39,6 +41,15 @@ const ProductDetail = () => {
         }
         const data = await response.json();
         setProduct(data);
+
+        const allProductsResponse = await ProductService.getAllProducts();
+        const allProducts = await allProductsResponse.json();
+        const related = allProducts
+          .filter(
+            (p: Product) => p.id !== data.id && p.category === data.category
+          )
+          .slice(0, 4);
+        setRelatedProducts(related);
       } catch (err) {
         setError("Failed to fetch product");
         console.error(err);
@@ -126,9 +137,7 @@ const ProductDetail = () => {
                 <div className="flex items-center ml-auto">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold ml-1">
-                    {averageRating !== null
-                      ? averageRating.toFixed(1)
-                      : 0}
+                    {averageRating !== null ? averageRating.toFixed(1) : 0}
                   </span>
                 </div>
               </div>
@@ -174,6 +183,60 @@ const ProductDetail = () => {
           userId={loggedInUser?.email ?? ""}
           onAverageRatingUpdate={setAverageRating}
         />
+        {relatedProducts.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              You might also like
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {relatedProducts.map((relatedProduct) => (
+                <Card
+                  key={relatedProduct.id}
+                  className="overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-gray-300"
+                >
+                  <div className="aspect-square bg-gray-100">
+                    <img
+                      src={
+                        relatedProduct.images?.[0] || "https://placehold.co/400"
+                      }
+                      alt={relatedProduct.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-center mb-1.5">
+                      <span className="text-sm text-muted-foreground">
+                        {relatedProduct.category}
+                      </span>
+                      <div className="flex items-center ml-auto">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium ml-1">
+                          {relatedProduct.rating ?? 0}
+                        </span>
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-lg line-clamp-2 mb-1.5">
+                      {relatedProduct.name}
+                    </h3>
+                    <div className="font-bold">
+                      ${relatedProduct.price?.toFixed(2)}
+                    </div>
+                    <Button
+                      className="w-full mt-3 bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
+                      asChild
+                    >
+                      <Link
+                        href={`/products/${relatedProduct.id}/${relatedProduct.sellerId}`}
+                      >
+                        View Details
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
