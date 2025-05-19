@@ -178,6 +178,19 @@ export class CosmosProductRepository {
     });
   }
 
+  async getProductsBySellerId(sellerId: string): Promise<Product[]> {
+    const query = {
+      query: "SELECT * FROM c WHERE c.sellerId = @sellerId",
+      parameters: [{ name: "@sellerId", value: sellerId }],
+    };
+
+    const { resources } = await this.container.items
+      .query(query, { partitionKey: sellerId })
+      .fetchAll();
+
+    return (resources ?? []).map((doc) => this.toProduct(doc));
+  }
+
   async updateProduct(id: string, product: Product): Promise<Product> {
     const result = await this.container.item(id, product.sellerId).replace({
       id,
