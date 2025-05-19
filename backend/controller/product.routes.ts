@@ -285,4 +285,18 @@ productRouter.delete(
   }
 );
 
+productRouter.get(
+  "/:sellerId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await ProductService.getInstance().getProductsBySellerId(
+        req.params.sellerId
+      );
+      res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default productRouter;
