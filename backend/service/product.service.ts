@@ -46,6 +46,13 @@ export class ProductService {
     return (await this.getRepo()).getProduct(id, sellerId);
   }
 
+  async getProductsBySellerId(sellerId: string) {
+    if (!sellerId) {
+      throw CustomError.invalid("Seller ID is invalid");
+    }
+    return (await this.getRepo()).getProductsBySellerId(sellerId);
+  }
+
   async deleteProduct(id: string, sellerId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
