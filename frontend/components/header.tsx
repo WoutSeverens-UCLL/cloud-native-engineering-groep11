@@ -1,4 +1,11 @@
-import { Home, LogIn, LogOut, ShoppingCart, Users } from "lucide-react";
+import {
+  BaggageClaim,
+  Home,
+  LogIn,
+  LogOut,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -76,6 +83,17 @@ const Header = () => {
                   Logout
                 </button>
               </>
+            )}
+
+            {(loggedInUser?.role === "seller" ||
+              loggedInUser?.role === "admin") && (
+              <Link
+                href="/myproducts"
+                className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+              >
+                <BaggageClaim className="h-4 w-4" />
+                My products
+              </Link>
             )}
 
             {!loggedInUser && (
