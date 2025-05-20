@@ -1,9 +1,9 @@
 import { CustomError } from "../model/custom-error";
 import { User } from "../model/user";
 import { CosmosUserRepository } from "../repository/cosmos-user-repository";
-import bcrypt from "bcrypt";
-import { AuthenticationResponse } from "../types";
+import type { AuthenticationResponse } from "../types";
 import generateSWToken from "../util/jwt";
+const bcrypt = require("bcryptjs");
 
 export class UserService {
   private static instance: UserService;
