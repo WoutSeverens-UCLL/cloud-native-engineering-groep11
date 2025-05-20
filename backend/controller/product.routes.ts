@@ -301,7 +301,7 @@ productRouter.get(
 
 /**
  * @swagger
- * /products/seller/{id}:
+ * /products/seller/partitionkey/{id}:
  *   get:
  *     summary: Get seller ID by product ID
  *     tags: [Product]
@@ -328,9 +328,10 @@ productRouter.get(
  */
 
 productRouter.get(
-  "/seller/:id",
+  "/seller/partitionkey/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("Incoming productId:", req.params.id);
       const sellerId =
         await ProductService.getInstance().getPartitionKeyForProduct(
           req.params.id
@@ -343,4 +344,3 @@ productRouter.get(
 );
 
 export default productRouter;
-

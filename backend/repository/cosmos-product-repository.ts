@@ -137,7 +137,7 @@ export class CosmosProductRepository {
   async getProduct(id: string, sellerId: string): Promise<Product> {
     const { resource } = await this.container.item(id, sellerId).read();
     if (!resource) {
-      throw CustomError.notFound("Product not found.");
+      throw CustomError.notFound("Product has not found.");
     }
     return this.toProduct(resource);
   }
@@ -221,6 +221,7 @@ export class CosmosProductRepository {
       };
 
       const { resources } = await this.container.items.query(query).fetchAll();
+      console.log("Resources gevonden:", resources);
 
       if (!resources || resources.length === 0) {
         throw CustomError.notFound(`Product met ID ${productId} niet gevonden`);
