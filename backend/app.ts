@@ -7,6 +7,8 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import productRouter from "./controller/product.routes";
 import { reviewRouter } from "./controller/review.routes";
+import { orderRouter } from "./controller/order.routes";
+import { paymentRouter } from "./controller/payment.routes";
 
 dotenv.config();
 
@@ -49,6 +51,8 @@ app.use(
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/reviews", reviewRouter);
+app.use("/orders", orderRouter);
+app.use("/payments", paymentRouter);
 
 app.get("/status", (req, res) => {
   res.json({ message: "Back-end is running..." });
