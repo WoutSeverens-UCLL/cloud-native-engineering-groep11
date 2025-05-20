@@ -66,4 +66,11 @@ export class ProductService {
     }
     return (await this.getRepo()).updateProduct(id, product);
   }
+  
+  async getPartitionKeyForProduct(productId: string) {
+    if (!productId) {
+      throw CustomError.invalid("Product ID is invalid");
+    }
+    return (await this.getRepo()).getPartitionKeyForProduct(productId);
+  }
 }

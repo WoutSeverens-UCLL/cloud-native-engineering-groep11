@@ -299,4 +299,48 @@ productRouter.get(
   }
 );
 
+/**
+ * @swagger
+ * /products/seller/{id}:
+ *   get:
+ *     summary: Get seller ID by product ID
+ *     tags: [Product]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The product ID
+ *     responses:
+ *       200:
+ *         description: The seller ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sellerId:
+ *                   type: string
+ *                   example: "abc123"
+ */
+
+productRouter.get(
+  "/seller/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const sellerId =
+        await ProductService.getInstance().getPartitionKeyForProduct(
+          req.params.id
+        );
+      res.status(200).json({ sellerId });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default productRouter;
+

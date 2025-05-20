@@ -207,4 +207,32 @@ export class CosmosProductRepository {
     const result = await this.container.item(id, sellerId).delete();
     return result.statusCode === 204;
   }
+
+  async getPartitionKeyForProduct(productId: string): Promise<string> {
+    try {
+      const query = {
+        query: "SELECT VALUE c.sellerId FROM c WHERE c.id = @id",
+        parameters: [
+          {
+            name: "@id",
+            value: productId,
+          },
+        ],
+      };
+
+      const { resources } = await this.container.items.query(query).fetchAll();
+
+      if (!resources || resources.length === 0) {
+        throw CustomError.notFound(`Product met ID ${productId} niet gevonden`);
+      }
+
+      return resources[0] as string;
+    } catch (error) {
+      console.error(
+        `Fout bij ophalen partition key voor product ${productId}:`,
+        error
+      );
+      throw error;
+    }
+  }
 }
