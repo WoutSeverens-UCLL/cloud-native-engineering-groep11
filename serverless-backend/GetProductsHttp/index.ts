@@ -1,5 +1,5 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { ProductService } from "../service/product.service"
+import { AzureFunction, Context, HttpRequest } from "@azure/functions";
+import { ProductService } from "../service/product.service";
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -10,9 +10,9 @@ const httpTrigger: AzureFunction = async function (
   context.res = {
     body: products,
     headers: {
-      "Content-Type": "application/json"
-    }
-  }
+      "Content-Type": "application/json",
+    },
+  };
 };
 
 export default httpTrigger;

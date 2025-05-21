@@ -1,4 +1,4 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
+import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { ReviewService } from "../service/review.service";
 
 const httpTrigger: AzureFunction = async function (
@@ -10,9 +10,9 @@ const httpTrigger: AzureFunction = async function (
   context.res = {
     body: reviews,
     headers: {
-      "Content-Type": "application/json"
-    }
-  }
+      "Content-Type": "application/json",
+    },
+  };
 };
 
 export default httpTrigger;
