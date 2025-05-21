@@ -1,28 +1,34 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import { UserService } from "../service/user.service"
-
-
+import { AzureFunction, Context, HttpRequest } from "@azure/functions";
+import { UserService } from "../service/user.service";
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  const { email } = req.query;
+  try {
+    const { email } = req.query;
 
-  const user = await UserService.getInstance().deleteUser(email);
+    const user = await UserService.getInstance().deleteUser(email);
 
-  if (!user) {
     context.res = {
-      status: 404,
-      body: "User not found"
+      body: user,
+      headers: {
+        "Content-Type": "application/json",
+      },
     };
-    return;
-  }
-
-  context.res = {
-    body: user,
-    headers: {
-      "Content-Type": "application/json"
+  } catch (error: any) {
+    if (error.code === 404) {
+      context.res = {
+        status: 404,
+        body: { error: "User not found" },
+        headers: { "Content-Type": "application/json" },
+      };
+    } else {
+      context.res = {
+        status: 400,
+        body: { error: error.message || "Invalid request" },
+        headers: { "Content-Type": "application/json" },
+      };
     }
   }
 };

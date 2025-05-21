@@ -9,21 +9,16 @@ const httpTrigger: AzureFunction = async function (
     const users = await UserService.getInstance().getAllUsers();
 
     context.res = {
-      status: 200,
       body: users,
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
-  } catch (error) {
-    context.log.error("Failed to get users:", error);
-
+  } catch (error: any) {
     context.res = {
-      status: 500,
-      body: {
-        error: "Internal Server Error",
-        message: error instanceof Error ? error.message : "Unknown error"
-      }
+      status: 400,
+      body: { error: error.message || "Invalid request" },
+      headers: { "Content-Type": "application/json" },
     };
   }
 };
