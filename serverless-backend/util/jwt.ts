@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+const jwt = require("jsonwebtoken");
 import { Role } from '../../serverless-backend/types';
 
 export default function generateSWToken({ email, role }: { email: string; role: Role }) {
