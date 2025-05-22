@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["get", "post"],
-      "route": "GetReviewById/{id}/{productId}"
+      "route": "GetReviewById/{id}/{productId?}"
     },
     {
       "type": "http",

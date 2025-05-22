@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get", "post"],
-      "route": "DeleteReviewHttp/{id}/{productId}"
+      "methods": ["get", "post", "delete"],
+      "route": "DeleteReviewHttp/{id?}/{productId?}"
     },
     {
       "type": "http",

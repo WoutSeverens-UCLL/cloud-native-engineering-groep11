@@ -5,13 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "get",
-        "post",
-        "delete",
-        "put"
-      ],
-      "route" : "UpdateReviewHttp/{id}"
+      "methods": ["get", "post", "delete", "put"],
+      "route": "UpdateReviewHttp/{id?}"
     },
     {
       "type": "http",
