@@ -1,4 +1,4 @@
-import { Payment, PaymentStatus } from "types";
+import { Payment } from "types";
 
 const getToken = (): string => {
   const loggedInUserString = sessionStorage.getItem("loggedInUser");
