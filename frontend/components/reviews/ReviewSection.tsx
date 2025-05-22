@@ -99,7 +99,7 @@ const ReviewSection: React.FC<Props> = ({
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center justify-between text-left"
+              className="flex items-center justify-between text-left cursor-pointer"
             >
               <h2 className="text-2xl font-bold text-gray-900">
                 Reviews ({reviews.length})
@@ -115,7 +115,7 @@ const ReviewSection: React.FC<Props> = ({
             <Button
               onClick={() => setShowReviewForm(!showReviewForm)}
               variant="outline"
-              className="flex items-center gap-2 border-purple-700 text-purple-700 hover:bg-purple-50 font-semibold"
+              className="flex items-center gap-2 border-purple-700 text-purple-700 hover:bg-purple-50 font-semibold cursor-pointer"
             >
               <Edit className="h-4 w-4" />
               Write a review
@@ -173,13 +173,13 @@ const ReviewSection: React.FC<Props> = ({
                       type="button"
                       variant="outline"
                       onClick={() => setShowReviewForm(false)}
-                      className="font-semibold"
+                      className="font-semibold cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-200"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold"
+                      className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
                     >
                       Submit Review
                     </Button>
