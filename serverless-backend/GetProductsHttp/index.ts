@@ -5,14 +5,22 @@ const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
-  const products = await ProductService.getInstance().getAllProducts();
+  try {
+    const users = await ProductService.getInstance().getAllProducts();
 
-  context.res = {
-    body: products,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
+    context.res = {
+      body: users,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+  } catch (error: any) {
+    context.res = {
+      status: 400,
+      body: { error: error.message || "Invalid request" },
+      headers: { "Content-Type": "application/json" },
+    };
+  }
 };
 
 export default httpTrigger;
