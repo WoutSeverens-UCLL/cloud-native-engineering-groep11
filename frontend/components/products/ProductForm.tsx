@@ -4,7 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Product } from "types";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@components/ui/form";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
 import { Button } from "@components/ui/button";
@@ -17,7 +24,10 @@ const productSchema = z.object({
   price: z.coerce.number().positive("Price must be positive"),
   brand: z.string().min(1, "Brand is required"),
   category: z.string().min(1, "Category is required"),
-  stock: z.coerce.number().int().nonnegative("Stock must be a non-negative integer"),
+  stock: z.coerce
+    .number()
+    .int()
+    .nonnegative("Stock must be a non-negative integer"),
 });
 
 interface ProductFormProps {
@@ -36,12 +46,14 @@ export default function ProductForm({
   submitButtonText,
   onCancel,
   title,
-}: ProductFormProps) {
+}: Readonly<ProductFormProps>) {
   // State for array inputs
   const [images, setImages] = useState<string[]>(initialData?.images || []);
   const [colors, setColors] = useState<string[]>(initialData?.colors || []);
   const [sizes, setSizes] = useState<string[]>(initialData?.sizes || []);
-  const [features, setFeatures] = useState<string[]>(initialData?.features || []);
+  const [features, setFeatures] = useState<string[]>(
+    initialData?.features || []
+  );
   const [newImage, setNewImage] = useState("");
   const [newColor, setNewColor] = useState("");
   const [newSize, setNewSize] = useState("");
@@ -51,12 +63,12 @@ export default function ProductForm({
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: initialData?.name || "",
-      description: initialData?.description || "",
-      price: initialData?.price || 0,
-      brand: initialData?.brand || "",
-      category: initialData?.category || "",
-      stock: initialData?.stock || 0,
+      name: initialData?.name ?? "",
+      description: initialData?.description ?? "",
+      price: initialData?.price ?? 0,
+      brand: initialData?.brand ?? "",
+      category: initialData?.category ?? "",
+      stock: initialData?.stock ?? 0,
     },
   });
 
@@ -123,7 +135,8 @@ export default function ProductForm({
     } catch (error) {
       console.error("Error submitting product:", error);
       toast.error("Failed to submit product", {
-        description: "There was an error processing your request. Please try again.",
+        description:
+          "There was an error processing your request. Please try again.",
       });
     }
   };
@@ -135,7 +148,10 @@ export default function ProductForm({
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Basic Information */}
               <FormField
@@ -173,7 +189,13 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel>Price ($)</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -376,11 +398,7 @@ export default function ProductForm({
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-              >
+              <Button type="button" variant="outline" onClick={onCancel}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
