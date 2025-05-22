@@ -9,6 +9,7 @@ import productRouter from "./controller/product.routes";
 import { reviewRouter } from "./controller/review.routes";
 import { orderRouter } from "./controller/order.routes";
 import { paymentRouter } from "./controller/payment.routes";
+import cartRouter from "./controller/cart.routes";
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use("/products", productRouter);
 app.use("/reviews", reviewRouter);
 app.use("/orders", orderRouter);
 app.use("/payments", paymentRouter);
+app.use("/carts", cartRouter);
 
 app.get("/status", (req, res) => {
   res.json({ message: "Back-end is running..." });
