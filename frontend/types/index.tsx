@@ -32,7 +32,48 @@ export type Review = {
   comment?: string;
 };
 
+export type Order = {
+  id?: string;
+  productId?: string;
+  sellerId?: string;
+  buyerId?: string;
+  quantity?: number;
+  totalAmount?: number;
+  status?: OrderStatus;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type OrderStatus = "pending" | "completed" | "failed" | "cancelled";
+
+export type Payment = {
+  id?: string;
+  orderId?: string;
+  amount?: number;
+  status?: PaymentStatus;
+  paymentMethod?: string;
+  createdAt?: string;
+  paidAt?: string;
+  cardDetails?: {
+    cardNumber?: string;
+  };
+};
+
+export type PaymentStatus = "pending" | "paid" | "failed";
+
 export type StatusMessage = {
   type: "success" | "error";
   message: string;
+};
+
+export type Cart = {
+  userId?: string;
+  items?: CartItem[];
+  updatedAt?: Date;
+};
+
+export type CartItem = {
+  productId?: string;
+  quantity?: number;
+  price?: number;
 };
