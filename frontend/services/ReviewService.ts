@@ -20,6 +20,7 @@ const getReviewsByProductId = (productId: string) => {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${productId}`, {
     method: "GET",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
   });

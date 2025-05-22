@@ -137,7 +137,7 @@ export class CosmosProductRepository {
   async getProduct(id: string, sellerId: string): Promise<Product> {
     const { resource } = await this.container.item(id, sellerId).read();
     if (!resource) {
-      throw CustomError.notFound("Product not found.");
+      throw CustomError.notFound("Product has not found.");
     }
     return this.toProduct(resource);
   }
@@ -178,6 +178,19 @@ export class CosmosProductRepository {
     });
   }
 
+  async getProductsBySellerId(sellerId: string): Promise<Product[]> {
+    const query = {
+      query: "SELECT * FROM c WHERE c.sellerId = @sellerId",
+      parameters: [{ name: "@sellerId", value: sellerId }],
+    };
+
+    const { resources } = await this.container.items
+      .query(query, { partitionKey: sellerId })
+      .fetchAll();
+
+    return (resources ?? []).map((doc) => this.toProduct(doc));
+  }
+
   async updateProduct(id: string, product: Product): Promise<Product> {
     const result = await this.container.item(id, product.sellerId).replace({
       id,
@@ -193,5 +206,34 @@ export class CosmosProductRepository {
   async deleteProduct(id: string, sellerId: string): Promise<boolean> {
     const result = await this.container.item(id, sellerId).delete();
     return result.statusCode === 204;
+  }
+
+  async getPartitionKeyForProduct(productId: string): Promise<string> {
+    try {
+      const query = {
+        query: "SELECT VALUE c.sellerId FROM c WHERE c.id = @id",
+        parameters: [
+          {
+            name: "@id",
+            value: productId,
+          },
+        ],
+      };
+
+      const { resources } = await this.container.items.query(query).fetchAll();
+      console.log("Resources gevonden:", resources);
+
+      if (!resources || resources.length === 0) {
+        throw CustomError.notFound(`Product met ID ${productId} niet gevonden`);
+      }
+
+      return resources[0] as string;
+    } catch (error) {
+      console.error(
+        `Fout bij ophalen partition key voor product ${productId}:`,
+        error
+      );
+      throw error;
+    }
   }
 }

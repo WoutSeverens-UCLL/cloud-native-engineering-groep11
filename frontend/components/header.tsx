@@ -1,4 +1,12 @@
-import { Home, LogIn, LogOut, ShoppingCart, Users } from "lucide-react";
+import CartService from "@services/CartService";
+import {
+  BaggageClaim,
+  Home,
+  LogIn,
+  LogOut,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -15,6 +23,30 @@ const Header = () => {
       setLoggedInUser(JSON.parse(loggedInUserString));
     }
   }, []);
+
+  const handleCart = async () => {
+    if (!loggedInUser) {
+      alert("Please log in to view your cart.");
+      router.push("/login");
+    }
+
+    const response = await CartService.getCartByUserId(
+      loggedInUser?.email ?? ""
+    );
+
+    const exisitingCart = await response.json();
+
+    if (exisitingCart) {
+      router.push("/cart");
+    } else {
+      await CartService.createCart({
+        userId: loggedInUser?.email ?? "",
+        items: [],
+        updatedAt: new Date(),
+      });
+      router.push("/cart");
+    }
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem("loggedInUser");
@@ -69,6 +101,14 @@ const Header = () => {
                 </Link>
 
                 <button
+                  onClick={handleCart}
+                  className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Cart
+                </button>
+
+                <button
                   onClick={handleLogout}
                   className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-all"
                 >
@@ -76,6 +116,17 @@ const Header = () => {
                   Logout
                 </button>
               </>
+            )}
+
+            {(loggedInUser?.role === "seller" ||
+              loggedInUser?.role === "admin") && (
+              <Link
+                href="/myproducts"
+                className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+              >
+                <BaggageClaim className="h-4 w-4" />
+                My products
+              </Link>
             )}
 
             {!loggedInUser && (

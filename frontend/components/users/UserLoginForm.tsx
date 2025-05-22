@@ -114,7 +114,7 @@ const UserLoginForm: React.FC = () => {
                 className={
                   type === "success"
                     ? "bg-green-50 border-green-300 text-green-800"
-                    : ""
+                    : "bg-red-50 border-red-300 text-red-800"
                 }
               >
                 <AlertDescription>{message}</AlertDescription>
@@ -179,7 +179,7 @@ const UserLoginForm: React.FC = () => {
             >
               Sign In
             </Button>
-          </form> 
+          </form>
         </CardContent>
 
         <CardFooter className="flex flex-col">

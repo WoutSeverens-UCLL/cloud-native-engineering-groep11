@@ -1,7 +1,7 @@
 export enum Role {
-  BUYER = 'buyer',
-  ADMIN = 'admin',
-  SELLER = 'seller',
+  BUYER = "buyer",
+  ADMIN = "admin",
+  SELLER = "seller",
 }
 export enum Category {
   ELECTRONICS = "electronics",
@@ -23,7 +23,7 @@ export enum Sizes {
   XL = "XL",
   XXL = "XXL",
   XXXL = "XXXL",
-};
+}
 export enum Colors {
   RED = "red",
   GREEN = "green",
@@ -37,6 +37,9 @@ export enum Colors {
   GREY = "grey",
 }
 
+export type OrderStatus = "pending" | "completed" | "failed" | "cancelled";
+export type PaymentStatus = "pending" | "paid" | "failed";
+
 export type UserInput = {
   id: string;
   firstName: string;
@@ -46,11 +49,15 @@ export type UserInput = {
   role: Role;
 };
 
-export type AuthenticationResponse ={
+export type AuthenticationResponse = {
   message: string;
   token: string;
   email: string;
   role: Role;
-}
+};
 
-
+export type CartItem = {
+  productId?: string;
+  quantity?: number;
+  price?: number;
+};

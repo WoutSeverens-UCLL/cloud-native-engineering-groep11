@@ -1,13 +1,16 @@
 import Header from "@components/header";
 import ReviewSection from "@components/reviews/ReviewSection";
 import { Button } from "@components/ui/button";
+import { Card, CardContent } from "@components/ui/card";
 import { Separator } from "@components/ui/separator";
 import ProductService from "@services/ProductService";
-import { ArrowLeft, ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Star, Plus, Minus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Product, User } from "types";
+import { toast } from "sonner";
+import CartService from "@services/CartService";
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -17,6 +20,8 @@ const ProductDetail = () => {
   const [error, setError] = useState("");
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const loggedInUserString = sessionStorage.getItem("loggedInUser");
@@ -39,9 +44,23 @@ const ProductDetail = () => {
         }
         const data = await response.json();
         setProduct(data);
+
+        const allProductsResponse = await ProductService.getAllProducts();
+        const allProducts = await allProductsResponse.json();
+        const related = allProducts
+          .filter(
+            (p: Product) => p.id !== data.id && p.category === data.category
+          )
+          .slice(0, 4);
+        if (related) {
+          setRelatedProducts(related);
+        } else {
+          toast.error("No related products found");
+        }
       } catch (err) {
         setError("Failed to fetch product");
         console.error(err);
+        toast.error("Failed to load product details");
       } finally {
         setIsLoading(false);
       }
@@ -49,6 +68,68 @@ const ProductDetail = () => {
 
     fetchProduct();
   }, [id, sellerId]);
+
+  const handleAddItemToCart = async () => {
+    try {
+      if (!product) {
+        toast.error("Product not found");
+        router.push("/products");
+        return;
+      }
+
+      if (!loggedInUser) {
+        toast.error("Please log in to add items to your cart.");
+        router.push("/login");
+        return;
+      }
+
+      const userId = loggedInUser?.email ?? "";
+
+      // Probeer de cart op te halen
+      const response = await CartService.getCartByUserId(userId);
+      let cartData;
+
+      if (response.ok) {
+        cartData = await response.json();
+      } else {
+        // Als er geen cart is, maak er een aan
+        const newCartResponse = await CartService.createCart({
+          userId,
+          items: [],
+          updatedAt: new Date(),
+        });
+
+        if (!newCartResponse.ok) {
+          toast.error("Failed to create a new cart.");
+          return;
+        }
+
+        cartData = await newCartResponse.json();
+      }
+
+      // Voeg het item toe aan de cart
+      const item = {
+        productId: product.id,
+        quantity: quantity, // of een andere logica voor hoeveelheid
+        price: product.price,
+      };
+
+      const addItemResponse = await CartService.addItemToCart(item, userId);
+
+      if (addItemResponse.ok) {
+        toast.success("Product added to cart!");
+      } else {
+        toast.error("Failed to add product to cart.");
+      }
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      toast.error("Something went wrong while adding item to cart.");
+    }
+  };
+
+  const increaseQuantity = () => setQuantity((prev) => prev + 1);
+  const decreaseQuantity = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   if (isLoading) {
     return (
@@ -126,9 +207,7 @@ const ProductDetail = () => {
                 <div className="flex items-center ml-auto">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-semibold ml-1">
-                    {averageRating !== null
-                      ? averageRating.toFixed(1)
-                      : 0}
+                    {averageRating !== null ? averageRating.toFixed(1) : 0}
                   </span>
                 </div>
               </div>
@@ -162,8 +241,33 @@ const ProductDetail = () => {
               </div>
             )}
 
+            {/* Quantity selector */}
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-3">Quantity</h2>
+              <div className="flex items-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={decreaseQuantity}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="mx-4 font-medium text-lg">{quantity}</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={increaseQuantity}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
             <div className="mt-8">
-              <Button className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-lg text-white font-semibold py-6 cursor-pointer">
+              <Button
+                className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-lg py-6"
+                onClick={handleAddItemToCart}
+              >
                 <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
               </Button>
             </div>
@@ -174,6 +278,60 @@ const ProductDetail = () => {
           userId={loggedInUser?.email ?? ""}
           onAverageRatingUpdate={setAverageRating}
         />
+        {relatedProducts.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              You might also like
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {relatedProducts.map((relatedProduct) => (
+                <Card
+                  key={relatedProduct.id}
+                  className="overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-gray-300"
+                >
+                  <div className="aspect-square bg-gray-100">
+                    <img
+                      src={
+                        relatedProduct.images?.[0] || "https://placehold.co/400"
+                      }
+                      alt={relatedProduct.name}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex items-center mb-1.5">
+                      <span className="text-sm text-muted-foreground">
+                        {relatedProduct.category}
+                      </span>
+                      <div className="flex items-center ml-auto">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium ml-1">
+                          {relatedProduct.rating ?? 0}
+                        </span>
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-lg line-clamp-2 mb-1.5">
+                      {relatedProduct.name}
+                    </h3>
+                    <div className="font-bold">
+                      ${relatedProduct.price?.toFixed(2)}
+                    </div>
+                    <Button
+                      className="w-full mt-3 bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
+                      asChild
+                    >
+                      <Link
+                        href={`/products/${relatedProduct.id}/${relatedProduct.sellerId}`}
+                      >
+                        View Details
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
