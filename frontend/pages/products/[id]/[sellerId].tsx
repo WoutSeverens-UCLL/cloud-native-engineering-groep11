@@ -317,7 +317,7 @@ const ProductDetail = () => {
                       ${relatedProduct.price?.toFixed(2)}
                     </div>
                     <Button
-                      className="w-full mt-3 bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
+                      className="w-full mt-3 bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
                       asChild
                     >
                       <Link
