@@ -265,7 +265,7 @@ const ProductDetail = () => {
 
             <div className="mt-8">
               <Button
-                className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-lg py-6"
+                className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer py-6"
                 onClick={handleAddItemToCart}
               >
                 <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
