@@ -6,10 +6,10 @@ const httpTrigger: AzureFunction = async function (
   req: HttpRequest
 ): Promise<void> {
   try {
-    const users = await ProductService.getInstance().getAllProducts();
+    const products = await ProductService.getInstance().getAllProducts();
 
     context.res = {
-      body: users,
+      body: products,
       headers: {
         "Content-Type": "application/json",
       },
