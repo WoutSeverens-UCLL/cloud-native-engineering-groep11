@@ -48,7 +48,7 @@ const updateProduct = (id: string, product: Product) => {
     },
     body: JSON.stringify(product),
   });
-}
+};
 
 const getProductsBySellerId = (sellerId: string) => {
   return fetch(process.env.NEXT_PUBLIC_API_URL + `/products/${sellerId}`, {
@@ -73,6 +73,19 @@ const deleteProduct = (id: string, sellerId: string) => {
   );
 };
 
+const getPartitionKeyForProduct = (id: string) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL + `/products/seller/partitionKey/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+};
+
 const ProductService = {
   getAllProducts,
   getProduct,
@@ -80,6 +93,7 @@ const ProductService = {
   getProductsBySellerId,
   deleteProduct,
   updateProduct,
+  getPartitionKeyForProduct,
 };
 
 export default ProductService;
