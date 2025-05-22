@@ -1,12 +1,28 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { ProductService } from "../service/product.service";
+import { CustomError } from "../model/custom-error";
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
   try {
+    if (!req.body) {
+      throw CustomError.invalid("A valid request body is required.");
+    }
+
     const id = req.params.id;
+
+    if (!id) {
+      context.res = {
+        status: 400,
+        body: "Product ID is required",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      return;
+    }
 
     const product = await ProductService.getInstance().updateProduct(
       id,

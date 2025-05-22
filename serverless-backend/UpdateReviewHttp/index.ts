@@ -1,11 +1,16 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { ReviewService } from "../service/review.service";
+import { CustomError } from "../model/custom-error";
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
   try {
+    if (!req.body) {
+      throw CustomError.invalid("A valid request body is required.");
+    }
+
     const reviewId = req.params.id;
 
     if (!reviewId) {
@@ -23,17 +28,6 @@ const httpTrigger: AzureFunction = async function (
       reviewId,
       req.body
     );
-
-    // if (!review) {
-    //   context.res = {
-    //     status: 404,
-    //     body: "Review not found",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   };
-    //   return;
-    // }
 
     context.res = {
       body: review,
