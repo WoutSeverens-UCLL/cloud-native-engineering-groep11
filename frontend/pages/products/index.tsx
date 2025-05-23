@@ -5,6 +5,7 @@ import { Separator } from "@components/ui/separator";
 import ProductService from "@services/ProductService";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { User } from "types";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -12,6 +13,14 @@ const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const loggedInUserString = sessionStorage.getItem("loggedInUser");
+    if (loggedInUserString !== null) {
+      setLoggedInUser(JSON.parse(loggedInUserString));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -92,9 +101,27 @@ const ProductsPage = () => {
           </div>
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-6 bg-gray-200" />
 
         {(() => {
+          if (!loggedInUser) {
+            return (
+              <div className="text-center py-12">
+                <p className="text-red-600 text-lg">
+                  You must be logged in to view all products!
+                </p>
+              </div>
+            );
+          }
+          if (loggedInUser && loggedInUser.role !== "buyer") {
+            return (
+              <div className="text-center py-12">
+                <p className="text-red-600 text-lg">
+                  You do not have permission to view all products!
+                </p>
+              </div>
+            );
+          }
           if (isLoading) {
             return (
               <div className="text-center py-12">
