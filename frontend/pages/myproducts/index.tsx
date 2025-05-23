@@ -153,8 +153,8 @@ const MyProducts = () => {
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <Table>
-              <TableHeader className="hover:bg-gray-50">
-                <TableRow>
+              <TableHeader>
+                <TableRow className="border-b-gray-200 hover:bg-gray-100">
                   <TableHead className="w-[100px] text-gray-500 font-semibold">Image</TableHead>
                   <TableHead className="text-gray-500 font-semibold">Name</TableHead>
                   <TableHead className="text-gray-500 font-semibold">Category</TableHead>
@@ -163,9 +163,9 @@ const MyProducts = () => {
                   <TableHead className="text-right text-gray-500 font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody className="hover:bg-gray-50">
+              <TableBody>
                 {products.map((product) => (
-                  <TableRow key={product.id}>
+                  <TableRow className="border-b-gray-200 hover:bg-gray-100" key={product.id}>
                     <TableCell>
                       {product.images && product.images.length > 0 ? (
                         <img
@@ -185,7 +185,7 @@ const MyProducts = () => {
                     <TableCell>{product.category}</TableCell>
                     <TableCell>
                       {typeof product.price === "number"
-                        ? `$${product.price.toFixed(2)}`
+                        ? `€ ${product.price.toFixed(2)}`
                         : "N/A"}
                     </TableCell>
                     <TableCell>{product.stock ?? "N/A"}</TableCell>
