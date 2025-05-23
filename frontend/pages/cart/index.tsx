@@ -231,12 +231,7 @@ const CartPage = () => {
                 <Button
                   className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
                   disabled={items.length === 0 || isLoading}
-                  onClick={() => {
-                    // Here you can connect to your payment API
-                    toast.info(
-                      "This is where you would integrate your payment API"
-                    );
-                  }}
+                  onClick={() => router.push("/checkout")}
                 >
                   Proceed to Checkout
                 </Button>

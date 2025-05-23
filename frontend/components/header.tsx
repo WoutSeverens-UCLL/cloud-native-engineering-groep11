@@ -100,6 +100,14 @@ const Header = () => {
                   Products
                 </Link>
 
+                <Link
+                  href="/orders"
+                  className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  orders
+                </Link>
+
                 <button
                   onClick={handleCart}
                   className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
