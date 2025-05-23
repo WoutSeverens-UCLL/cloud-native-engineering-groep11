@@ -45,6 +45,32 @@ export default function CreateProduct() {
     }
   };
 
+  if (!loggedInUser) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You must be logged in to create a product!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loggedInUser && loggedInUser.role !== "seller") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You do not have permission to create a product!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
