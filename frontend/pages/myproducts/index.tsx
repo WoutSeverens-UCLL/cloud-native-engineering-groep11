@@ -155,17 +155,32 @@ const MyProducts = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-b-gray-200 hover:bg-gray-100">
-                  <TableHead className="w-[100px] text-gray-500 font-semibold">Image</TableHead>
-                  <TableHead className="text-gray-500 font-semibold">Name</TableHead>
-                  <TableHead className="text-gray-500 font-semibold">Category</TableHead>
-                  <TableHead className="text-gray-500 font-semibold">Price</TableHead>
-                  <TableHead className="text-gray-500 font-semibold">Stock</TableHead>
-                  <TableHead className="text-right text-gray-500 font-semibold">Actions</TableHead>
+                  <TableHead className="w-[100px] text-gray-500 font-semibold">
+                    Image
+                  </TableHead>
+                  <TableHead className="text-gray-500 font-semibold">
+                    Name
+                  </TableHead>
+                  <TableHead className="text-gray-500 font-semibold">
+                    Category
+                  </TableHead>
+                  <TableHead className="text-gray-500 font-semibold">
+                    Price
+                  </TableHead>
+                  <TableHead className="text-gray-500 font-semibold">
+                    Stock
+                  </TableHead>
+                  <TableHead className="text-right text-gray-500 font-semibold">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {products.map((product) => (
-                  <TableRow className="border-b-gray-200 hover:bg-gray-100" key={product.id}>
+                  <TableRow
+                    className="border-b-gray-200 hover:bg-gray-100"
+                    key={product.id}
+                  >
                     <TableCell>
                       {product.images && product.images.length > 0 ? (
                         <img
@@ -196,7 +211,7 @@ const MyProducts = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="text-gray-500 border-gray-300 hover:bg-gray-100 cursor-pointer"
+                            className="text-gray-500 border-gray-300 hover:border-gray-600 cursor-pointer"
                           >
                             <Edit className="h-4 w-4 text-black" />
                           </Button>
@@ -204,7 +219,7 @@ const MyProducts = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-red-500 border-gray-300 hover:border-red-600 hover:bg-gray-100 cursor-pointer"
+                          className="text-red-500 border-gray-300 hover:border-red-600 cursor-pointer"
                           onClick={() =>
                             product.id && handleDeleteProduct(product.id)
                           }
