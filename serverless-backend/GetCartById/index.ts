@@ -6,7 +6,7 @@ const httpTrigger: AzureFunction = async function (
   req: HttpRequest
 ): Promise<void> {
   try {
-    const cartId = req.params.id;
+    const cartId = req.params.cartId;
     const userId = req.params.userId;
 
     if (!cartId || !userId) {
