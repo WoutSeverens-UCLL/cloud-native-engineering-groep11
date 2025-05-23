@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Review } from "types";
+import { Review, User } from "types";
 import ReviewService from "@services/ReviewService";
 import {
   ChevronDown,
@@ -36,6 +36,14 @@ const ReviewSection: React.FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const loggedInUserString = sessionStorage.getItem("loggedInUser");
+    if (loggedInUserString !== null) {
+      setLoggedInUser(JSON.parse(loggedInUserString));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -111,7 +119,7 @@ const ReviewSection: React.FC<Props> = ({
               )}
             </Button>
           </CollapsibleTrigger>
-          {isOpen && (
+          {isOpen && loggedInUser && loggedInUser.role !== "seller" && (
             <Button
               onClick={() => setShowReviewForm(!showReviewForm)}
               variant="outline"
