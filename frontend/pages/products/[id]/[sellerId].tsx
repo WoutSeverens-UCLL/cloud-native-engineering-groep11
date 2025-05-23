@@ -215,7 +215,7 @@ const ProductDetail = () => {
                 {product.name}
               </h1>
               <p className="text-2xl font-bold text-purple-700">
-                ${product.price?.toFixed(2)}
+                € {product.price?.toFixed(2)}
               </p>
             </div>
 
@@ -300,21 +300,21 @@ const ProductDetail = () => {
                   </div>
                   <CardContent className="p-4">
                     <div className="flex items-center mb-1.5">
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-sm text-gray-500">
                         {relatedProduct.category}
                       </span>
                       <div className="flex items-center ml-auto">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium ml-1">
+                        <span className="text-sm font-semibold ml-1">
                           {relatedProduct.rating ?? 0}
                         </span>
                       </div>
                     </div>
-                    <h3 className="font-semibold text-lg line-clamp-2 mb-1.5">
+                    <h3 className="font-semibold line-clamp-2 mb-1.5">
                       {relatedProduct.name}
                     </h3>
                     <div className="font-bold">
-                      ${relatedProduct.price?.toFixed(2)}
+                      € {relatedProduct.price?.toFixed(2)}
                     </div>
                     <Button
                       className="w-full mt-3 bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
