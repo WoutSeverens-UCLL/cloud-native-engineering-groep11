@@ -30,13 +30,14 @@ const ReviewSection: React.FC<Props> = ({
   onAverageRatingUpdate,
 }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [hoverRating, setHoverRating] = useState(0);
 
   useEffect(() => {
     const loggedInUserString = sessionStorage.getItem("loggedInUser");
@@ -89,7 +90,8 @@ const ReviewSection: React.FC<Props> = ({
       }
       setShowReviewForm(false);
       setComment("");
-      setRating(5);
+      setRating(0);
+      setHoverRating(0);
     } catch (error) {
       console.error(error);
       toast("Error submitting review. Please try again later.");
@@ -148,12 +150,14 @@ const ReviewSection: React.FC<Props> = ({
                         <Star
                           key={star}
                           id={star === 1 ? "rating-star-1" : undefined}
-                          className={`h-6 w-6 cursor-pointer ${
-                            rating >= star
+                          className={`h-6 w-6 cursor-pointer transition-colors ${
+                            (hoverRating || rating) >= star
                               ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
+                              : "text-gray-300 hover:text-yellow-200"
                           }`}
                           onClick={() => setRating(star)}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
                         />
                       ))}
                       <span className="ml-2 text-sm text-gray-600">
