@@ -131,6 +131,37 @@ const ProductDetail = () => {
   const decreaseQuantity = () =>
     setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
+  if (!loggedInUser) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You must be logged in to view product details!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (
+    loggedInUser &&
+    loggedInUser.role !== "seller" &&
+    loggedInUser.role !== "buyer" &&
+    loggedInUser.role !== "admin"
+  ) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You do not have permission to view product details!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
