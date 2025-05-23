@@ -53,7 +53,7 @@ export default function CreateProduct() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           submitButtonText="Create Product"
-          onCancel={() => router.push("/products")}
+          onCancel={() => router.push("/myproducts")}
           title="Create New Product"
         />
       </div>
