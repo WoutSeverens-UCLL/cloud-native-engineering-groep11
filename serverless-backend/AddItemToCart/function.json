@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get", "post", "patch"],
-      "route": "carts/{userId?}/items"
+      "methods": ["patch"],
+      "route": "carts/{userId}/items"
     },
     {
       "type": "http",

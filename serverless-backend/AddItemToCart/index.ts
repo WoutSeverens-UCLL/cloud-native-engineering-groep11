@@ -10,13 +10,21 @@ const httpTrigger: AzureFunction = async function (
 
     const item = req.body;
 
+    if (!item) {
+      context.res = {
+        status: 400,
+        body: { error: "Item in request body is required" },
+        headers: { "Content-Type": "application/json" },
+      };
+      return;
+    }
+
     const updatedCart = await CartService.getInstance().addItemToCart(
       item,
       userId
     );
 
     context.res = {
-      status: 200,
       body: updatedCart,
       headers: {
         "Content-Type": "application/json",
