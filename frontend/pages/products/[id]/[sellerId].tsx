@@ -174,12 +174,22 @@ const ProductDetail = () => {
       <Header />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Link
-            href="/products"
-            className="inline-flex items-center text-purple-700 hover:text-purple-900 transition-colors"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Products
-          </Link>
+          {loggedInUser?.role === "buyer" && (
+            <Link
+              href="/products"
+              className="inline-flex items-center text-purple-700 hover:text-purple-900 transition-colors"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Products
+            </Link>
+          )}
+          {loggedInUser?.role === "seller" && (
+            <Link
+              href="/myproducts"
+              className="inline-flex items-center text-purple-700 hover:text-purple-900 transition-colors"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to My Products
+            </Link>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -219,7 +229,7 @@ const ProductDetail = () => {
               </p>
             </div>
 
-            <Separator className="my-6" />
+            <Separator className="my-6 bg-gray-200" />
 
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-3">Description</h2>
@@ -278,7 +288,8 @@ const ProductDetail = () => {
           userId={loggedInUser?.email ?? ""}
           onAverageRatingUpdate={setAverageRating}
         />
-        {relatedProducts.length > 0 && (
+
+        {loggedInUser?.role === "buyer" && relatedProducts.length > 0 && (
           <div className="mt-16">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               You might also like
