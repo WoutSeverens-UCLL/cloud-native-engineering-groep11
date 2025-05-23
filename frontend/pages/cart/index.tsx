@@ -124,9 +124,9 @@ const CartPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items List */}
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="shadow-lg border-gray-200 border-t-4 border-t-purple-700">
               <CardHeader>
-                <CardTitle>Items</CardTitle>
+                <CardTitle className="text-3xl">Items</CardTitle>
               </CardHeader>
 
               <CardContent>
@@ -146,7 +146,7 @@ const CartPage = () => {
                     {cartProducts.map(({ itemId, quantity, product }) => (
                       <div
                         key={itemId}
-                        className="flex items-center justify-between border-b py-4"
+                        className="flex items-center justify-between border-b border-gray-200 py-4"
                       >
                         <div className="flex items-center gap-4">
                           <h3 className="text-lg font-semibold">
@@ -176,7 +176,7 @@ const CartPage = () => {
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-medium">
-                            ${((product.price ?? 0) * quantity).toFixed(2)}
+                            € {((product.price ?? 0) * quantity).toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -190,6 +190,7 @@ const CartPage = () => {
                   variant="outline"
                   disabled={cart?.items?.length === 0 || isLoading}
                   onClick={() => clearCart()}
+                  className="cursor-pointer border-gray-300 hover:bg-gray-200 font-semibold"
                 >
                   Clear Cart
                 </Button>
@@ -199,37 +200,37 @@ const CartPage = () => {
 
           {/* Order Summary */}
           <div>
-            <Card>
+            <Card className="shadow-lg border-gray-200 border-t-4 border-t-purple-700">
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+                <CardTitle className="text-3xl">Order Summary</CardTitle>
               </CardHeader>
 
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal:</span>
-                    <span className="font-medium">
-                      ${totalAmount.toFixed(2)}
+                    <span className="text-gray-500">Subtotal:</span>
+                    <span className="font-semibold">
+                      € {totalAmount.toFixed(2)}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping:</span>
-                    <span className="font-medium">Free</span>
+                    <span className="text-gray-500">Shipping:</span>
+                    <span className="font-semibold">Free</span>
                   </div>
 
-                  <Separator />
+                  <Separator className="bg-gray-200"  />
 
                   <div className="flex justify-between text-lg">
-                    <span className="font-semibold">Total:</span>
-                    <span className="font-bold">${totalAmount.toFixed(2)}</span>
+                    <span className="text-2xl font-semibold">Total:</span>
+                    <span className="font-bold">€ {totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>
 
               <CardFooter>
                 <Button
-                  className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900"
+                  className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
                   disabled={items.length === 0 || isLoading}
                   onClick={() => {
                     // Here you can connect to your payment API
