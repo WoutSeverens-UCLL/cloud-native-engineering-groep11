@@ -43,7 +43,6 @@ const CartPage = () => {
           return;
         }
       }
-      throw new Error("Invalid or missing user");
     } catch (e) {
       console.error("Failed to parse logged in user:", e);
       toast.error("You must be logged in to view your cart");
@@ -104,6 +103,32 @@ const CartPage = () => {
       setIsLoading(false);
     }
   };
+
+  if (!loggedInUser) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You must be logged in to view your cart!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loggedInUser && loggedInUser.role !== "buyer") {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You do not have permission to view your cart!
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -219,11 +244,13 @@ const CartPage = () => {
                     <span className="font-semibold">Free</span>
                   </div>
 
-                  <Separator className="bg-gray-200"  />
+                  <Separator className="bg-gray-200" />
 
                   <div className="flex justify-between text-lg">
                     <span className="text-2xl font-semibold">Total:</span>
-                    <span className="font-bold">€ {totalAmount.toFixed(2)}</span>
+                    <span className="font-bold">
+                      € {totalAmount.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </CardContent>
