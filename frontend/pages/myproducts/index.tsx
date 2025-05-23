@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@components/ui/table";
 import ProductService from "@services/ProductService";
-import { Edit, PlusCircle, Trash } from "lucide-react";
+import { Edit, PlusCircle, Trash, Eye } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -170,6 +170,9 @@ const MyProducts = () => {
                   <TableHead className="text-gray-500 font-semibold">
                     Stock
                   </TableHead>
+                  <TableHead className="text-center text-gray-500 font-semibold">
+                    View
+                  </TableHead>
                   <TableHead className="text-right text-gray-500 font-semibold">
                     Actions
                   </TableHead>
@@ -204,6 +207,19 @@ const MyProducts = () => {
                         : "N/A"}
                     </TableCell>
                     <TableCell>{product.stock ?? "N/A"}</TableCell>
+                    <TableCell className="text-center">
+                      <Link
+                        href={`/products/${product.id}/${product.sellerId}`}
+                      >
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-green-600 border-green-600 text-white hover:bg-green-700 hover:border-green-700 cursor-pointer"
+                        >
+                          <Eye className="h-4 w-4 text-white" />
+                        </Button>
+                      </Link>
+                    </TableCell>
 
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
