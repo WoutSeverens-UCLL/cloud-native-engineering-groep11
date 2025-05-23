@@ -34,7 +34,6 @@ const MyProducts = () => {
           return;
         }
       }
-      throw new Error("Invalid or missing user");
     } catch (e) {
       console.error("Failed to parse logged in user:", e);
       toast.error("You must be logged in to view your products");
@@ -91,9 +90,35 @@ const MyProducts = () => {
     }
   };
 
+  if (!loggedInUser) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You must be logged in to view your products!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loggedInUser && loggedInUser.role !== "seller") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You do not have permission to view someones products!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="container mx-auto py-8 px-4">
           <div className="text-center py-12">Loading your products...</div>
@@ -104,7 +129,7 @@ const MyProducts = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="container mx-auto py-8 px-4">
           <div className="text-center py-12">
@@ -122,7 +147,7 @@ const MyProducts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="container mx-auto py-8 px-4">
         <div className="flex justify-between items-center mb-8">
