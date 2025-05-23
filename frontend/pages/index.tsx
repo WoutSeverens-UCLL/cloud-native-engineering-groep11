@@ -19,8 +19,15 @@ const Home = () => {
     if (!loggedInUser) {
       toast.error("Please log in or make an account to get started.");
       router.push("/login");
-    } else {
+    } 
+    if (loggedInUser && loggedInUser.role === "admin") {
+      router.push("/users");
+    }
+    if (loggedInUser && loggedInUser.role === "buyer") {
       router.push("/products");
+    }
+    if (loggedInUser && loggedInUser.role === "seller") {
+      router.push("/myproducts");
     }
   };
 
