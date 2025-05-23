@@ -82,7 +82,7 @@ const Header = () => {
               Home
             </Link>
 
-            {loggedInUser && (
+            {loggedInUser && loggedInUser.role === "admin" && (
               <>
                 <Link
                   href="/users"
@@ -91,7 +91,18 @@ const Header = () => {
                   <Users className="h-4 w-4" />
                   Users
                 </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-all cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
+            )}
 
+            {loggedInUser && loggedInUser.role === "buyer" && (
+              <>
                 <Link
                   href="/products"
                   className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
@@ -118,15 +129,24 @@ const Header = () => {
               </>
             )}
 
-            {(loggedInUser?.role === "seller" ||
-              loggedInUser?.role === "admin") && (
-              <Link
-                href="/myproducts"
-                className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
-              >
-                <BaggageClaim className="h-4 w-4" />
-                My products
-              </Link>
+            {loggedInUser && loggedInUser.role === "seller" && (
+              <>
+                <Link
+                  href="/myproducts"
+                  className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+                >
+                  <BaggageClaim className="h-4 w-4" />
+                  My products
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full transition-all cursor-pointer"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </>
             )}
 
             {!loggedInUser && (
@@ -187,7 +207,7 @@ const Header = () => {
                 </Link>
               </li>
 
-              {loggedInUser && (
+              {loggedInUser && loggedInUser.role === "admin" && (
                 <>
                   <li>
                     <Link
@@ -199,6 +219,23 @@ const Header = () => {
                       Users
                     </Link>
                   </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full text-left hover:bg-white/10 px-3 py-2 rounded-md transition-colors cursor-pointer"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </button>
+                  </li>
+                </>
+              )}
+
+              {loggedInUser && loggedInUser.role === "buyer" && (
+                <>
                   <li>
                     <Link
                       href="/products"
@@ -212,10 +249,49 @@ const Header = () => {
                   <li>
                     <button
                       onClick={() => {
+                        handleCart();
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full text-left hover:bg-white/10 px-3 py-2 rounded-md transition-colors cursor-pointer"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Cart
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
                         handleLogout();
                         setIsMenuOpen(false);
                       }}
-                      className="flex items-center gap-2 w-full text-left hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                      className="flex items-center gap-2 w-full text-left hover:bg-white/10 px-3 py-2 rounded-md transition-colors cursor-pointer"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Logout
+                    </button>
+                  </li>
+                </>
+              )}
+
+              {loggedInUser && loggedInUser.role === "seller" && (
+                <>
+                  <li>
+                    <Link
+                      href="/myproducts"
+                      className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <BaggageClaim className="h-4 w-4" />
+                      My products
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 w-full text-left hover:bg-white/10 px-3 py-2 rounded-md transition-colors cursor-pointer"
                     >
                       <LogOut className="h-4 w-4" />
                       Logout
