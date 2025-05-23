@@ -42,7 +42,6 @@ export default function EditProduct() {
       } catch (err) {
         console.error("Failed to fetch product:", err);
         toast.error("Failed to load product");
-        router.push("/myproducts");
       } finally {
         setIsLoading(false);
       }
@@ -73,6 +72,35 @@ export default function EditProduct() {
       setIsSubmitting(false);
     }
   };
+
+  if (!loggedInUser) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You must be logged in to edit your product!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (
+    (loggedInUser && loggedInUser.role !== "seller") ||
+    loggedInUser.email !== product?.sellerId
+  ) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="text-center text-red-600 py-12">
+            You do not have permission to edit someones product!
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
