@@ -1,7 +1,9 @@
 import Header from "@components/header";
 import UsersOverviewTable from "@components/users/UsersOverviewTable";
 import UserService from "@services/UserService";
+import { Loader } from "lucide-react";
 import Head from "next/head";
+import router from "next/router";
 import { useEffect, useState } from "react";
 import { User } from "types";
 
@@ -9,12 +11,13 @@ const Users: React.FC = () => {
   const [users, setUsers] = useState<Array<User>>();
   const [error, setError] = useState<string>();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    const loggedInUserString = sessionStorage.getItem("loggedInUser");
-    if (loggedInUserString !== null) {
-      setLoggedInUser(JSON.parse(loggedInUserString));
-    }
+    const userString = sessionStorage.getItem("loggedInUser");
+    if (userString) setLoggedInUser(JSON.parse(userString));
+    setAuthLoading(false);
   }, []);
 
   const getAllUsers = async () => {
@@ -26,15 +29,55 @@ const Users: React.FC = () => {
 
   useEffect(() => {
     getAllUsers();
+    setIsLoading(false);
   }, []);
+
+  if (authLoading || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600 text-lg">Loading</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!loggedInUser) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="text-center text-red-600 py-12">
-            You must be logged in to view users!
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="mb-4">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+              <svg
+                className="h-6 w-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Authentication Required
+          </h3>
+          <p className="text-gray-600">
+            You need to be logged in to view all users. Please log in to
+            continue.
+          </p>
+          <div className="mt-6">
+            <button
+              onClick={() => router.push("/login")}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+            >
+              Go to Login
+            </button>
           </div>
         </div>
       </div>
@@ -43,11 +86,38 @@ const Users: React.FC = () => {
 
   if (loggedInUser && loggedInUser.role !== "admin") {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="text-center text-red-600 py-12">
-            You do not have permission to view users!
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="mb-4">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
+              <svg
+                className="h-6 w-6 text-yellow-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Access Denied
+          </h3>
+          <p className="text-gray-600 mb-2">
+            You do not have permission to view this page.
+          </p>
+          <div className="mt-6">
+            <button
+              onClick={() => window.history.back()}
+              className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
+            >
+              Go Back
+            </button>
           </div>
         </div>
       </div>
