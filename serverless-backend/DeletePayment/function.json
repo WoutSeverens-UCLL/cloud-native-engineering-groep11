@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["delete"],
-      "route": "payment/{id}/{orderId}"
+      "route": "payments/{id}/{orderId}"
     },
     {
       "type": "http",
