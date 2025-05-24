@@ -1,7 +1,7 @@
 import Header from "@components/header";
 import ReviewSection from "@components/reviews/ReviewSection";
 import { Button } from "@components/ui/button";
-import { Card, CardContent } from "@components/ui/card";
+import { Card, CardContent, CardFooter } from "@components/ui/card";
 import { Separator } from "@components/ui/separator";
 import ProductService from "@services/ProductService";
 import CartService from "@services/CartService";
@@ -255,7 +255,7 @@ const ProductDetail = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white p-4 rounded-lg shadow-sm">
             <img
-              src={product.images?.[0] ?? "/fallback.jpg"}
+              src={product.images?.[0] ?? "https://placehold.co/600x400"}
               alt={product.name}
               className="w-full h-auto object-contain rounded-md"
               style={{ maxHeight: "400px" }}
@@ -324,7 +324,7 @@ const ProductDetail = () => {
             </div>
 
             <Button
-              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 text-white font-semibold py-6 hover:from-purple-800 hover:to-indigo-900"
+              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
@@ -352,7 +352,7 @@ const ProductDetail = () => {
                 >
                   <div className="aspect-square bg-gray-100">
                     <img
-                      src={p.images?.[0] ?? "/fallback.jpg"}
+                      src={p.images?.[0] ?? "https://placehold.co/300x300"}
                       alt={p.name}
                       className="object-cover w-full h-full"
                     />
@@ -371,12 +371,14 @@ const ProductDetail = () => {
                     <div className="font-bold mt-1">
                       € {p.price?.toFixed(2)}
                     </div>
-                    <Button className="w-full mt-3" asChild>
-                      <Link href={`/products/${p.id}/${p.sellerId}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </CardContent>
+                     </CardContent>
+                    <CardFooter className="p-4 pt-0">
+                      <Button className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" asChild>
+                        <Link href={`/products/${p.id}/${p.sellerId}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                    </CardFooter>
                 </Card>
               ))}
             </div>
