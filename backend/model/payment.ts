@@ -37,9 +37,6 @@ export class Payment {
     createdAt: string;
     paidAt?: string;
   }) {
-    if (!payment.id || typeof payment.id !== "string") {
-      throw new Error("Invalid ID");
-    }
     if (!payment.orderId || typeof payment.orderId !== "string") {
       throw new Error("Invalid Order ID");
     }
