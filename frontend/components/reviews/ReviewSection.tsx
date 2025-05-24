@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Review } from "types";
+import { Review, User } from "types";
 import ReviewService from "@services/ReviewService";
 import {
   ChevronDown,
@@ -30,12 +30,21 @@ const ReviewSection: React.FC<Props> = ({
   onAverageRatingUpdate,
 }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  useEffect(() => {
+    const loggedInUserString = sessionStorage.getItem("loggedInUser");
+    if (loggedInUserString !== null) {
+      setLoggedInUser(JSON.parse(loggedInUserString));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -81,7 +90,8 @@ const ReviewSection: React.FC<Props> = ({
       }
       setShowReviewForm(false);
       setComment("");
-      setRating(5);
+      setRating(0);
+      setHoverRating(0);
     } catch (error) {
       console.error(error);
       toast("Error submitting review. Please try again later.");
@@ -99,7 +109,7 @@ const ReviewSection: React.FC<Props> = ({
           <CollapsibleTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center justify-between text-left"
+              className="flex items-center justify-between text-left cursor-pointer"
             >
               <h2 className="text-2xl font-bold text-gray-900">
                 Reviews ({reviews.length})
@@ -111,11 +121,11 @@ const ReviewSection: React.FC<Props> = ({
               )}
             </Button>
           </CollapsibleTrigger>
-          {isOpen && (
+          {isOpen && loggedInUser && loggedInUser.role !== "seller" && (
             <Button
               onClick={() => setShowReviewForm(!showReviewForm)}
               variant="outline"
-              className="flex items-center gap-2 border-purple-700 text-purple-700 hover:bg-purple-50 font-semibold"
+              className="flex items-center gap-2 border-purple-700 text-purple-700 hover:bg-purple-50 font-semibold cursor-pointer"
             >
               <Edit className="h-4 w-4" />
               Write a review
@@ -140,12 +150,14 @@ const ReviewSection: React.FC<Props> = ({
                         <Star
                           key={star}
                           id={star === 1 ? "rating-star-1" : undefined}
-                          className={`h-6 w-6 cursor-pointer ${
-                            rating >= star
+                          className={`h-6 w-6 cursor-pointer transition-colors ${
+                            (hoverRating || rating) >= star
                               ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
+                              : "text-gray-300 hover:text-yellow-200"
                           }`}
                           onClick={() => setRating(star)}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
                         />
                       ))}
                       <span className="ml-2 text-sm text-gray-600">
@@ -173,13 +185,13 @@ const ReviewSection: React.FC<Props> = ({
                       type="button"
                       variant="outline"
                       onClick={() => setShowReviewForm(false)}
-                      className="font-semibold"
+                      className="font-semibold cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-200"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold"
+                      className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
                     >
                       Submit Review
                     </Button>

@@ -142,7 +142,7 @@ export default function ProductForm({
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto shadow-lg border-gray-200 border-t-4 border-t-purple-700">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">{title}</CardTitle>
       </CardHeader>
@@ -159,11 +159,17 @@ export default function ProductForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Name</FormLabel>
+                    <FormLabel className="font-semibold">
+                      Product Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Product name" {...field} />
+                      <Input
+                        className="border-gray-200"
+                        placeholder="Product name"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-600 text-sm" />
                   </FormItem>
                 )}
               />
@@ -173,11 +179,15 @@ export default function ProductForm({
                 name="brand"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Brand</FormLabel>
+                    <FormLabel className="font-semibold">Brand</FormLabel>
                     <FormControl>
-                      <Input placeholder="Brand name" {...field} />
+                      <Input
+                        className="border-gray-200"
+                        placeholder="Brand name"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-600 text-sm" />
                   </FormItem>
                 )}
               />
@@ -187,9 +197,10 @@ export default function ProductForm({
                 name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price ($)</FormLabel>
+                    <FormLabel className="font-semibold">Price (€)</FormLabel>
                     <FormControl>
                       <Input
+                        className="border-gray-200"
                         type="number"
                         step="0.01"
                         min="0"
@@ -197,7 +208,7 @@ export default function ProductForm({
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-600 text-sm" />
                   </FormItem>
                 )}
               />
@@ -207,11 +218,17 @@ export default function ProductForm({
                 name="stock"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Stock</FormLabel>
+                    <FormLabel className="font-semibold">Stock</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" placeholder="0" {...field} />
+                      <Input
+                        className="border-gray-200"
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-600 text-sm" />
                   </FormItem>
                 )}
               />
@@ -221,11 +238,15 @@ export default function ProductForm({
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="font-semibold">Category</FormLabel>
                     <FormControl>
-                      <Input placeholder="Category" {...field} />
+                      <Input
+                        className="border-gray-200"
+                        placeholder="Category"
+                        {...field}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-600 text-sm" />
                   </FormItem>
                 )}
               />
@@ -236,29 +257,30 @@ export default function ProductForm({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel className="font-semibold">Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Product description"
-                      className="min-h-[120px]"
+                      placeholder="Product description border-gray-200"
+                      className="min-h-[120px] border-gray-200"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-600 text-sm" />
                 </FormItem>
               )}
             />
 
             {/* Image URLs */}
             <div className="space-y-2">
-              <FormLabel>Images</FormLabel>
+              <FormLabel className="font-semibold">Images</FormLabel>
               <div className="flex items-center gap-2">
                 <Input
+                  className="border-gray-200"
                   placeholder="Image URL"
                   value={newImage}
                   onChange={(e) => setNewImage(e.target.value)}
                 />
-                <Button type="button" onClick={addImage} size="sm">
+                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addImage} size="sm">
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -268,14 +290,14 @@ export default function ProductForm({
                   {images.map((image, index) => (
                     <div
                       key={index}
-                      className="flex items-center bg-secondary text-secondary-foreground px-3 py-1 rounded-md"
+                      className="flex items-center bg-gray-100 text-secondary-foreground px-3 py-1 rounded-md"
                     >
                       <span className="truncate max-w-[200px]">{image}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="ml-1 h-auto p-1"
+                        className="ml-1 h-auto p-1 cursor-pointer"
                         onClick={() => removeImage(index)}
                       >
                         <X className="h-3 w-3" />
@@ -288,14 +310,15 @@ export default function ProductForm({
 
             {/* Colors */}
             <div className="space-y-2">
-              <FormLabel>Colors</FormLabel>
+              <FormLabel className="font-semibold">Colors</FormLabel>
               <div className="flex items-center gap-2">
                 <Input
+                  className="border-gray-200"
                   placeholder="Color"
                   value={newColor}
                   onChange={(e) => setNewColor(e.target.value)}
                 />
-                <Button type="button" onClick={addColor} size="sm">
+                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addColor} size="sm">
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -305,14 +328,14 @@ export default function ProductForm({
                   {colors.map((color, index) => (
                     <div
                       key={index}
-                      className="flex items-center bg-secondary text-secondary-foreground px-3 py-1 rounded-md"
+                      className="flex items-center bg-gray-100 text-secondary-foreground px-3 py-1 rounded-md"
                     >
                       <span>{color}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="ml-1 h-auto p-1"
+                        className="ml-1 h-auto p-1 cursor-pointer"
                         onClick={() => removeColor(index)}
                       >
                         <X className="h-3 w-3" />
@@ -325,14 +348,15 @@ export default function ProductForm({
 
             {/* Sizes */}
             <div className="space-y-2">
-              <FormLabel>Sizes</FormLabel>
+              <FormLabel className="font-semibold">Sizes</FormLabel>
               <div className="flex items-center gap-2">
                 <Input
+                  className="border-gray-200"
                   placeholder="Size"
                   value={newSize}
                   onChange={(e) => setNewSize(e.target.value)}
                 />
-                <Button type="button" onClick={addSize} size="sm">
+                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addSize} size="sm">
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -342,14 +366,14 @@ export default function ProductForm({
                   {sizes.map((size, index) => (
                     <div
                       key={index}
-                      className="flex items-center bg-secondary text-secondary-foreground px-3 py-1 rounded-md"
+                      className="flex items-center bg-gray-100 text-secondary-foreground px-3 py-1 rounded-md"
                     >
                       <span>{size}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="ml-1 h-auto p-1"
+                        className="ml-1 h-auto p-1 cursor-pointer"
                         onClick={() => removeSize(index)}
                       >
                         <X className="h-3 w-3" />
@@ -362,14 +386,15 @@ export default function ProductForm({
 
             {/* Features */}
             <div className="space-y-2">
-              <FormLabel>Features</FormLabel>
+              <FormLabel className="font-semibold">Features</FormLabel>
               <div className="flex items-center gap-2">
                 <Input
+                  className="border-gray-200"
                   placeholder="Feature"
                   value={newFeature}
                   onChange={(e) => setNewFeature(e.target.value)}
                 />
-                <Button type="button" onClick={addFeature} size="sm">
+                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addFeature} size="sm">
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -379,14 +404,14 @@ export default function ProductForm({
                   {features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-center bg-secondary text-secondary-foreground px-3 py-1 rounded-md"
+                      className="flex items-center bg-gray-100 text-secondary-foreground px-3 py-1 rounded-md"
                     >
                       <span className="truncate max-w-[200px]">{feature}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="ml-1 h-auto p-1"
+                        className="ml-1 h-auto p-1 cursor-pointer"
                         onClick={() => removeFeature(index)}
                       >
                         <X className="h-3 w-3" />
@@ -398,10 +423,10 @@ export default function ProductForm({
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button type="button" variant="outline" onClick={onCancel}>
+              <Button className="cursor-pointer border-gray-300 hover:bg-gray-200" type="button" variant="outline" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Processing..." : submitButtonText}
               </Button>
             </div>
