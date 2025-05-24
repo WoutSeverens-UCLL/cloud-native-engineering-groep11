@@ -14,7 +14,7 @@ on:
 # 2. Change these variables for your configuration:
 env:
   AZURE_FUNCTIONAPP_NAME: "cne-azfunction" # set this to your function app name on Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./serverless-backend" # set this to the path to your function app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "serverless-backend" # set this to the path to your function app project, defaults to the repository root
   NODE_VERSION: "20.x" # set this to the node version to use (e.g. '8.x', '10.x', '12.x')
 
 jobs:
@@ -27,8 +27,8 @@ jobs:
 
       - name: Run Upload Script
         run: |
-          chmod +x ../../upload-to-azure.sh
-          ../../upload-to-azure.sh
+          chmod +x ../upload-to-azure.sh
+          ../upload-to-azure.sh
         env:
           AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
           AZURE_STORAGE_CONTAINER: ${{ secrets.AZURE_STORAGE_CONTAINER }}
