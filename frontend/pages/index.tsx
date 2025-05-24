@@ -17,9 +17,8 @@ const Home = () => {
 
   const handleGetStarted = () => {
     if (!loggedInUser) {
-      toast.error("Please log in or make an account to get started.");
       router.push("/login");
-    } 
+    }
     if (loggedInUser && loggedInUser.role === "admin") {
       router.push("/users");
     }
