@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@components/ui/table";
 import ProductService from "@services/ProductService";
-import { Edit, PlusCircle, Trash, Eye } from "lucide-react";
+import { Edit, PlusCircle, Trash, Eye, Loader } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -22,35 +22,25 @@ const MyProducts = () => {
   const [error, setError] = useState<string | null>(null);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const router = useRouter();
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    const loggedInUserString = sessionStorage.getItem("loggedInUser");
-
-    try {
-      if (loggedInUserString) {
-        const parsed = JSON.parse(loggedInUserString);
-        if (parsed && typeof parsed === "object") {
-          setLoggedInUser(parsed);
-          return;
-        }
-      }
-    } catch (e) {
-      console.error("Failed to parse logged in user:", e);
-      toast.error("You must be logged in to view your products");
-      router.push("/login");
-    }
-  }, [router]);
+    const userString = sessionStorage.getItem("loggedInUser");
+    if (userString) setLoggedInUser(JSON.parse(userString));
+    setAuthLoading(false);
+  }, []);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const fetchMyProducts = async () => {
-      if (!loggedInUser) return;
-
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
         const response = await ProductService.getProductsBySellerId(
-          loggedInUser.email ?? ""
+          loggedInUser?.email ?? ""
         );
-
+        if (!response.ok) throw new Error("Failed to fetch products");
         const data = await response.json();
         setProducts(data);
       } catch (err) {
@@ -63,7 +53,7 @@ const MyProducts = () => {
     };
 
     fetchMyProducts();
-  }, [loggedInUser]);
+  }, [authLoading]);
 
   const handleDeleteProduct = async (productId: string) => {
     if (!productId) return;
@@ -90,26 +80,92 @@ const MyProducts = () => {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600 text-lg">Loading</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!loggedInUser) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="text-center text-red-600 py-12">
-            You must be logged in to view your products!
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="mb-4">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+              <svg
+                className="h-6 w-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Authentication Required
+          </h3>
+          <p className="text-gray-600">
+            You need to be logged in to see your products. Please log in to
+            continue.
+          </p>
+          <div className="mt-6">
+            <button
+              onClick={() => router.push("/login")}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+            >
+              Go to Login
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  if (loggedInUser && loggedInUser.role !== "seller") {
+  if (loggedInUser.role !== "seller") {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="text-center text-red-600 py-12">
-            You do not have permission to view someones products!
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="mb-4">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
+              <svg
+                className="h-6 w-6 text-yellow-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Access Denied
+          </h3>
+          <p className="text-gray-600 mb-2">
+            You do not have permission to view this page.
+          </p>
+          <div className="mt-6">
+            <button
+              onClick={() => window.history.back()}
+              className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
+            >
+              Go Back
+            </button>
           </div>
         </div>
       </div>
@@ -118,29 +174,10 @@ const MyProducts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="text-center py-12">Loading your products...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="text-center py-12">
-            <p className="text-red-600">{error}</p>
-            <Button
-              onClick={() => window.location.reload()}
-              className="mt-4 cursor-pointer"
-            >
-              Try Again
-            </Button>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600 text-lg">Loading</p>
         </div>
       </div>
     );
@@ -153,14 +190,12 @@ const MyProducts = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">My Products</h1>
 
-          {products.length > 0 && (
-            <Link href="/products/create">
-              <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer">
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add New Product
-              </Button>
-            </Link>
-          )}
+          <Link href="/products/create">
+            <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add New Product
+            </Button>
+          </Link>
         </div>
 
         {products.length === 0 ? (
@@ -279,5 +314,29 @@ const MyProducts = () => {
     </div>
   );
 };
+
+type StatusMessageProps = {
+  message: string;
+  type?: "error" | "info";
+};
+
+const StatusMessage = ({ message, type = "error" }: StatusMessageProps) => {
+  const textColor = type === "error" ? "text-red-600" : "text-gray-500";
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      <main className="container mx-auto py-8 px-4 flex-grow flex items-center justify-center">
+        <p className={`text-lg ${textColor} text-center`}>{message}</p>
+      </main>
+    </div>
+  );
+};
+
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen bg-gray-50 flex flex-col">
+    <Header />
+    <main className="container mx-auto py-8 px-4 flex-grow">{children}</main>
+  </div>
+);
 
 export default MyProducts;
