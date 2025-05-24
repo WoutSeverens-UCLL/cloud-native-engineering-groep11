@@ -129,7 +129,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-700" />
           <p className="text-gray-600 text-lg">Loading</p>
         </div>
       </div>
@@ -139,11 +139,11 @@ const ProductDetail = () => {
   if (!loggedInUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 border-t-4 border-t-purple-700 text-center">
           <div className="mb-4">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-purple-100">
               <svg
-                className="h-6 w-6 text-red-600"
+                className="h-6 w-6 text-purple-700"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -157,7 +157,7 @@ const ProductDetail = () => {
               </svg>
             </div>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-black mb-2">
             Authentication Required
           </h3>
           <p className="text-gray-600">
@@ -167,7 +167,7 @@ const ProductDetail = () => {
           <div className="mt-6">
             <button
               onClick={() => router.push("/login")}
-              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer px-4 py-2 rounded-md transition-colors"
             >
               Go to Login
             </button>
@@ -180,11 +180,11 @@ const ProductDetail = () => {
   if (!["buyer", "seller", "admin"].includes(loggedInUser.role ?? "")) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 border-t-4 border-t-purple-700 text-center">
           <div className="mb-4">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-purple-100">
               <svg
-                className="h-6 w-6 text-yellow-600"
+                className="h-6 w-6 text-purple-700"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -198,7 +198,7 @@ const ProductDetail = () => {
               </svg>
             </div>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-black mb-2">
             Access Denied
           </h3>
           <p className="text-gray-600 mb-2">
@@ -207,7 +207,7 @@ const ProductDetail = () => {
           <div className="mt-6">
             <button
               onClick={() => window.history.back()}
-              className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
+              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer px-4 py-2 rounded-md transition-colors"
             >
               Go Back
             </button>
@@ -221,13 +221,13 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-600" />
           <p className="text-gray-600 text-lg">No products found</p>
         </div>
         <div className="mt-6">
           <button
             onClick={() => window.history.back()}
-            className="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors cursor-pointer"
+            className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer px-4 py-2 rounded-md transition-colors"
           >
             Go Back
           </button>
@@ -371,14 +371,17 @@ const ProductDetail = () => {
                     <div className="font-bold mt-1">
                       € {p.price?.toFixed(2)}
                     </div>
-                     </CardContent>
-                    <CardFooter className="p-4 pt-0">
-                      <Button className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" asChild>
-                        <Link href={`/products/${p.id}/${p.sellerId}`}>
-                          View Details
-                        </Link>
-                      </Button>
-                    </CardFooter>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0">
+                    <Button
+                      className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                      asChild
+                    >
+                      <Link href={`/products/${p.id}/${p.sellerId}`}>
+                        View Details
+                      </Link>
+                    </Button>
+                  </CardFooter>
                 </Card>
               ))}
             </div>
