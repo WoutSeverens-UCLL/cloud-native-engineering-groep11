@@ -32,6 +32,7 @@ const ProductDetail = () => {
   const [loadingUser, setLoadingUser] = useState(true);
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   // Load user from session
   useEffect(() => {
@@ -82,10 +83,6 @@ const ProductDetail = () => {
     fetchData();
   }, [router.isReady, id, sellerId, loadingUser]);
 
-  const increaseQuantity = () => setQuantity((prev) => prev + 1);
-  const decreaseQuantity = () =>
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-
   const handleAddToCart = async () => {
     if (!product) return;
     if (!loggedInUser) {
@@ -123,6 +120,74 @@ const ProductDetail = () => {
       toast.error("Could not add product to cart.");
     }
   };
+
+  function getContrastColor(color: string): string {
+    // Standaardkleuren en hun RGB waardes (donkere kleuren)
+    const darkColors = new Set([
+      "black",
+      "navy",
+      "purple",
+      "brown",
+      "maroon",
+      "darkred",
+      "darkgreen",
+      "darkblue",
+      "darkslategray",
+      "darkslategrey",
+      "indigo",
+      "midnightblue",
+      "teal",
+      "forestgreen",
+      "darkmagenta",
+      "darkviolet",
+      "slateblue",
+      "rebeccapurple",
+      "firebrick",
+    ]);
+
+    // Kleine helper om hex naar rgb te converteren
+    function hexToRgb(hex: string) {
+      hex = hex.replace(/^#/, "");
+      if (hex.length === 3) {
+        hex = hex
+          .split("")
+          .map((c) => c + c)
+          .join("");
+      }
+      const num = parseInt(hex, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255,
+      };
+    }
+
+    // Luminantie berekenen volgens WCAG
+    function luminance(r: number, g: number, b: number) {
+      const a = [r, g, b].map((v) => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    }
+
+    const lower = color.toLowerCase().trim();
+
+    // Eerst checken op namen
+    if (darkColors.has(lower)) {
+      return "white";
+    }
+
+    // Check of het hex is (bijv. #123456)
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(lower)) {
+      const { r, g, b } = hexToRgb(lower);
+      // wit tekst bij donkere kleuren (luminantie laag)
+      return luminance(r, g, b) < 0.5 ? "white" : "black";
+    }
+
+    // Fallback, assume lichte kleur, zwart als tekst
+    return "black";
+  }
 
   // Conditional Rendering
   if (loadingUser || isLoading) {
@@ -263,68 +328,123 @@ const ProductDetail = () => {
           </div>
 
           <div>
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm font-semibold rounded-full text-gray-800">
-                  {product.category}
-                </span>
-                <div className="flex items-center">
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                {/* Category en Brand samen in één flex container met spacing */}
+                <div className="flex space-x-2">
+                  <span className="px-3 py-1 bg-gray-100 text-sm font-semibold rounded-full text-gray-800">
+                    {product.category}
+                  </span>
+                  {product.brand && (
+                    <span className="px-3 py-1 bg-gray-100 text-sm font-semibold rounded-full text-gray-600">
+                      {product.brand}
+                    </span>
+                  )}
+                </div>
+
+                {/* Rating */}
+                <div className="flex items-center space-x-1">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  <span className="ml-1 font-semibold">
+                  <span className="font-semibold">
                     {averageRating?.toFixed(1) ?? "0.0"}
                   </span>
                 </div>
               </div>
-              <h1 className="text-3xl font-bold">{product.name}</h1>
-              <p className="text-2xl text-purple-700 font-bold mt-2">
+
+              {/* Product naam */}
+              <h1 className="text-3xl font-bold leading-tight">
+                {product.name}
+              </h1>
+
+              {/* Prijs */}
+              <p className="text-2xl text-purple-700 font-bold mt-3">
                 € {product.price != null ? product.price.toFixed(2) : "N/A"}
               </p>
+
+              {/* Colors */}
+              {Array.isArray(product.colors) && product.colors.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-semibold mb-1">Colors:</h3>
+                  <div className="flex space-x-2">
+                    {product.colors.map((color, i) => {
+                      const isSelected = selectedColor === color.toLowerCase();
+                      return (
+                        <span
+                          key={i}
+                          className={`w-8 h-8 rounded-full border cursor-pointer ${
+                            isSelected
+                              ? "border-4 border-purple-700"
+                              : "border-gray-300"
+                          }`}
+                          style={{ backgroundColor: color.toLowerCase() }}
+                          title={color}
+                          onClick={() => setSelectedColor(color.toLowerCase())}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Sizes */}
+              {Array.isArray(product.sizes) && product.sizes.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="font-semibold mb-1">Sizes:</h3>
+                  <div className="flex space-x-2">
+                    {product.sizes.map((size, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 rounded-full text-sm font-medium border border-gray-300 text-gray-700"
+                      >
+                        {size}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Stock */}
+              <div className="mt-4">
+                <h3 className="font-semibold mb-1">Stock:</h3>
+                <p
+                  className={`font-medium ${
+                    typeof product.stock === "number" && product.stock > 0
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {typeof product.stock === "number" && product.stock > 0
+                    ? `${product.stock} available`
+                    : "Out of stock"}
+                </p>
+              </div>
             </div>
 
-            <Separator className="my-6" />
+            <Separator className="my-6 bg-gray-200" />
 
+            {/* Description */}
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Description</h2>
-              <p className="text-gray-700">
-                {product.description || "No description available."}
+              <p className="text-gray-700 leading-relaxed">
+                {product.description || ""}
               </p>
             </div>
 
+            {/* Features */}
             {Array.isArray(product.features) && product.features.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Features</h2>
-                <ul className="list-disc pl-5 text-gray-700">
-                  {product.features.map((f, i) => (
-                    <li key={i}>{f}</li>
+                <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                  {product.features.map((feature, i) => (
+                    <li key={i}>{feature}</li>
                   ))}
                 </ul>
               </div>
             )}
 
-            {/* Quantity Controls */}
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2">Quantity</h2>
-              <div className="flex items-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={decreaseQuantity}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="mx-4 text-lg font-medium">{quantity}</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={increaseQuantity}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
+            {/* Add to Cart button */}
             <Button
-              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer py-3 flex items-center justify-center"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
