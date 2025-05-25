@@ -51,7 +51,13 @@ const ReviewSection: React.FC<Props> = ({
       try {
         const response = await ReviewService.getReviewsByProductId(productId);
         const data = await response.json();
-        setReviews(data);
+
+        const reviewArray = Array.isArray(data)
+          ? data
+          : Array.isArray(data.reviews)
+          ? data.reviews
+          : [];
+        setReviews(reviewArray);
         if (onAverageRatingUpdate) {
           const total = data.reduce(
             (sum: any, r: any) => sum + (r.rating || 0),

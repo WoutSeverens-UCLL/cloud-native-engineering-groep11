@@ -43,7 +43,7 @@ const updatePaymentStatus = (
   status: PaymentStatus
 ) => {
   return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/payments/${id}/${orderId}/status`,
+    process.env.NEXT_PUBLIC_API_URL + `/payments/${id}/${orderId}/status` + process.env.FK_PAYMENTS_UPDATE_STATUS,
     {
       method: "PATCH",
       headers: {

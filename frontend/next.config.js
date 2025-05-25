@@ -54,6 +54,12 @@ module.exports = {
       "?code=sPjhn129Z74JDjfVQ287OsFk7TiDhMcI2bWJ7KaB2PF0AzFuleiI1w==",
     FK_CARTS_UPDATE_QUANTITY:
       "?code=-WhqbF1mcCzaQxu2C1CcjuDBhYDsJTLMzrD2RmZS-XBHAzFu5EFnrw==",
+    FK_PAYMENTS_UPDATE_STATUS:
+      "?code=g2CpGOYL4xYCaaHgCxVq-CifalV3auq7f3D-0qdzAOz6AzFuab2Olw==",
+    FK_ORDERS_GET_PRODUCTS_BY_ORDER_ID:
+      "?code=BoHY0RbDcPPQQ_o0J5APFkloz6p1kmxiceNBuhVNtktyAzFu3GJfWQ==",
+    FK_ORDERS_GET_PARTITION_KEY:
+      "?code=v_k3dBJnLG6kURf2HfCYJozjTr4HXmB4YNaeXBEb9OJsAzFu_fqQOA==",
   },
   output: "export",
 };

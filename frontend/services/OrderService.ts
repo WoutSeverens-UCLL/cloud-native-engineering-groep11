@@ -36,7 +36,7 @@ const getOrder = (id: string, buyerId: string) => {
 
 const getProductsByOrderId = (orderId: string) => {
   return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/orders/products/${orderId}/all`,
+    process.env.NEXT_PUBLIC_API_URL + `/orders/products/${orderId}/all` + process.env.FK_ORDERS_GET_PRODUCTS_BY_ORDER_ID,
     {
       method: "GET",
       headers: {
@@ -117,7 +117,7 @@ const deleteOrder = (id: string, buyerId: string) => {
 
 const getPartitionKeyForOrder = (id: string) => {
   return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/orders/buyer/partitionKey/${id}`,
+    process.env.NEXT_PUBLIC_API_URL + `/orders/buyer/partitionKey/${id}` + process.env.FK_ORDERS_GET_PARTITION_KEY,
     {
       method: "GET",
       headers: {
