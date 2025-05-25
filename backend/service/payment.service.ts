@@ -1,6 +1,7 @@
 import { CustomError } from "../model/custom-error";
 import { Payment } from "../model/payment";
 import { CosmosPaymentRepository } from "../repository/cosmos-payment-repository";
+import { PaymentStatus } from "../types";
 
 export class PaymentService {
   private static instance: PaymentService;
@@ -57,5 +58,12 @@ export class PaymentService {
       throw CustomError.invalid("Id is invalid");
     }
     return (await this.getRepo()).deletePayment(id, orderId);
+  }
+
+  async updatePaymentStatus(id: string, orderId: string, status: PaymentStatus) {
+    if (!id || !orderId || !status) {
+      throw CustomError.invalid("Id, Order ID or Status is invalid");
+    }
+    return (await this.getRepo()).updatePaymentStatus(id, orderId, status);
   }
 }
