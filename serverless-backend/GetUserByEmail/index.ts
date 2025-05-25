@@ -6,7 +6,7 @@ const httpTrigger: AzureFunction = async function (
   req: HttpRequest
 ): Promise<void> {
   try {
-    const { email } = req.query;
+    const email = req.params.email;
 
     const user = await UserService.getInstance().getUser(email);
 

@@ -5,11 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [
-        "get",
-        "post",
-        "delete"
-      ]
+      "methods": ["delete"],
+      "route": "users/delete/{email?}"
     },
     {
       "type": "http",
