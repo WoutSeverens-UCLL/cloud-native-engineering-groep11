@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get", "post"],
-      "route": "GetReviewByProductId/{productId?}"
+      "methods": ["get"],
+      "route": "reviews/product/{productId?}"
     },
     {
       "type": "http",
