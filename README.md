@@ -23,6 +23,7 @@ Navigeer naar de `serverless-backend` folder en maak de volgende bestanden aan:
     "version": "[4.*, 5.0.0)"
   }
 }
+```
 
 #### `local.settings.json`
 ```json
