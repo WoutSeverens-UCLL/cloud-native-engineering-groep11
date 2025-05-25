@@ -52,10 +52,18 @@ export type Payment = {
   amount?: number;
   status?: PaymentStatus;
   paymentMethod?: string;
+  firstName?: string;
+  lastName?: string;
+  billingAddress?: string;
+  shippingAddress?: string;
+  email?: string;
   createdAt?: string;
   paidAt?: string;
   cardDetails?: {
     cardNumber?: string;
+    cardHolderName?: string;
+    expiryDate?: string;
+    cvv?: string;
   };
 };
 
