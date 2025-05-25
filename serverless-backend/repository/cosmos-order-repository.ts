@@ -20,7 +20,6 @@ export class CosmosOrderRepository {
 
   private toOrder(document: CosmosDocument) {
     if (
-      !document.id ||
       !document.productId ||
       !document.sellerId ||
       !document.buyerId ||

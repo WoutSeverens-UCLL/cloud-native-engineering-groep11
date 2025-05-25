@@ -9,8 +9,19 @@ interface CosmosDocument {
   amount: number;
   status: PaymentStatus;
   paymentMethod: string;
+  firstName: string;
+  lastName: string;
+  billingAddress: string;
+  shippingAddress: string;
+  email: string;
   createdAt: string;
   paidAt?: string;
+  cardDetails?: {
+    cardNumber?: string;
+    cardHolderName?: string;
+    expiryDate?: string;
+    cvv?: string;
+  };
 }
 
 export class CosmosPaymentRepository {
@@ -18,11 +29,15 @@ export class CosmosPaymentRepository {
 
   private toPayment(document: CosmosDocument) {
     if (
-      !document.id ||
       !document.orderId ||
       !document.amount ||
       !document.status ||
       !document.paymentMethod ||
+      !document.firstName ||
+      !document.lastName ||
+      !document.billingAddress ||
+      !document.shippingAddress ||
+      !document.email ||
       !document.createdAt
     ) {
       throw new Error("Invalid payment document.");
@@ -34,6 +49,11 @@ export class CosmosPaymentRepository {
       amount: document.amount,
       status: document.status,
       paymentMethod: document.paymentMethod,
+      firstName: document.firstName,
+      lastName: document.lastName,
+      billingAddress: document.billingAddress,
+      shippingAddress: document.shippingAddress,
+      email: document.email,
       createdAt: document.createdAt,
       paidAt: document.paidAt ?? new Date().toISOString(),
     });
@@ -75,8 +95,14 @@ export class CosmosPaymentRepository {
       amount: payment.amount,
       status: payment.status,
       paymentMethod: payment.paymentMethod,
+      firstName: payment.firstName,
+      lastName: payment.lastName,
+      billingAddress: payment.billingAddress,
+      shippingAddress: payment.shippingAddress,
+      email: payment.email,
       createdAt: payment.createdAt,
       paidAt: payment.paidAt,
+      cardDetails: payment.cardDetails,
     });
 
     if (!result.resource || !result.resource.id) {

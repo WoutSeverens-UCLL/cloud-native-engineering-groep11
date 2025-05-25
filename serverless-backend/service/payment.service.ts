@@ -22,8 +22,14 @@ export class PaymentService {
       amount: payment.amount,
       status: payment.status,
       paymentMethod: payment.paymentMethod,
+      firstName: payment.firstName,
+      lastName: payment.lastName,
+      billingAddress: payment.billingAddress,
+      shippingAddress: payment.shippingAddress,
+      email: payment.email,
       createdAt: payment.createdAt,
       paidAt: payment.paidAt,
+      cardDetails: payment.cardDetails,
     });
     return (await this.getRepo()).createPayment(createdPayment);
   }
