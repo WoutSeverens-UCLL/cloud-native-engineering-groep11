@@ -56,6 +56,12 @@ export class CosmosPaymentRepository {
       email: document.email,
       createdAt: document.createdAt,
       paidAt: document.paidAt ?? new Date().toISOString(),
+      cardDetails: document.cardDetails ?? {
+        cardNumber: "",
+        cardHolderName: "",
+        expiryDate: "",
+        cvv: "",
+      },
     });
   }
   constructor(private readonly container: Container) {
@@ -150,5 +156,35 @@ export class CosmosPaymentRepository {
   async deletePayment(id: string, orderId: string): Promise<boolean> {
     const result = await this.container.item(id, orderId).delete();
     return result.statusCode === 204;
+  }
+
+  async updatePaymentStatus(
+    id: string,
+    orderId: string,
+    status: PaymentStatus
+  ): Promise<Payment> {
+    const { resource: existingDoc } = await this.container
+      .item(id, orderId)
+      .read<CosmosDocument>();
+
+    if (!existingDoc) {
+      throw CustomError.notFound("Order not found.");
+    }
+
+    const updatedDoc: CosmosDocument = {
+      ...existingDoc,
+      status,
+      paidAt: new Date().toISOString(),
+    };
+
+    const { resource: replacedDoc } = await this.container
+      .item(id, orderId)
+      .replace(updatedDoc);
+
+    if (!replacedDoc) {
+      throw CustomError.internal("Failed to update the payment.");
+    }
+
+    return this.toPayment(replacedDoc);
   }
 }
