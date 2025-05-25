@@ -6,7 +6,7 @@
       "direction": "in",
       "name": "req",
       "methods": ["get"],
-      "route": "orders/product/{productId}"
+      "route": "getOrdersByProductId/{productId?}"
     },
     {
       "type": "http",
