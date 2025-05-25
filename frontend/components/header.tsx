@@ -312,6 +312,16 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
+                    <Link
+                      href="/orders"
+                      className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Orders
+                    </Link>
+                  </li>
+                  <li>
                     <button
                       onClick={() => {
                         handleLogout();
