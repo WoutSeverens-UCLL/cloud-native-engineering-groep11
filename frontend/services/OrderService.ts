@@ -6,24 +6,32 @@ const getToken = (): string => {
 };
 
 const createOrder = async (order: Order) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + "/orders", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(order),
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL + "/orders" + process.env.FK_ORDERS_CREATE,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(order),
+    }
+  );
 };
 
 const getOrder = (id: string, buyerId: string) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + `/orders/${id}/${buyerId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      `/orders/${id}/${buyerId}` +
+      process.env.FK_ORDERS_GET_BY_ID_AND_BUYER_ID,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 };
 
 const updateOrderStatus = (
@@ -31,20 +39,27 @@ const updateOrderStatus = (
   buyerId: string,
   status: OrderStatus
 ) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + `/orders/${id}/${buyerId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify({ status }),
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      `/orders/${id}/${buyerId}` +
+      process.env.FK_ORDERS_UPDATE,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ status }),
+    }
+  );
 };
 
 // Get orders for a user (buyer or seller)
 const getOrdersByUser = (userId: string, role: "buyer" | "seller") => {
   return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/orders/user/${role}/${userId}`,
+    process.env.NEXT_PUBLIC_API_URL +
+      `/orders/user/${role}/${userId}` +
+      process.env.FK_ORDERS_GET_BY_USER,
     {
       method: "GET",
 
@@ -58,7 +73,9 @@ const getOrdersByUser = (userId: string, role: "buyer" | "seller") => {
 
 const getOrdersByProduct = (productId: string) => {
   return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/orders/product/${productId}`,
+    process.env.NEXT_PUBLIC_API_URL +
+      `/orders/products/items/${productId}` +
+      process.env.FK_ORDERS_GET_BY_PRODUCT,
     {
       method: "GET",
       headers: {
@@ -70,13 +87,18 @@ const getOrdersByProduct = (productId: string) => {
 };
 
 const deleteOrder = (id: string, buyerId: string) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + `/orders/${id}/${buyerId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      `/orders/${id}/${buyerId}` +
+      process.env.FK_ORDERS_DELETE,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 };
 
 const OrderService = {

@@ -7,24 +7,34 @@ const getToken = (): string => {
 
 // For simulation purposes, we'll store payments in session storage
 const createPayment = (payment: Payment) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + "/payments", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(payment),
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      "/payments" +
+      process.env.FK_PAYMENTS_CREATE,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(payment),
+    }
+  );
 };
 
 const getPaymentsByOrderId = (orderId: string) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + `/payments/order/${orderId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      `/payments/order/${orderId}` +
+      process.env.FK_PAYMENTS_GET_BY_ORDER_ID,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 };
 
 // Enhanced payment processing function with card validation

@@ -6,24 +6,32 @@ const getToken = (): string => {
 };
 
 const createReview = (review: Review) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + "/reviews", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-    body: JSON.stringify(review),
-  });
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      "/reviews" +
+      process.env.FK_REVIEWS_CREATE,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(review),
+    }
+  );
 };
 
 const getReviewsByProductId = (productId: string) => {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${productId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
+  return fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/reviews/product/${productId}${process.env.FK_REVIEWS_GET_BY_PRODUCT_ID}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
 };
 
 const ReviewService = {
