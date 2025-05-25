@@ -220,7 +220,10 @@ const ReviewSection: React.FC<Props> = ({
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="text-xs text-gray-400 mb-1">
-                          {review.userId?.split(".")[0] ?? "Anonymous"}
+                          {review.userId
+                            ?.split("@")[0]
+                            .replace(/\./g, " ")
+                            .replace(/\b\w/g, (c) => c.toUpperCase())}
                         </div>
                         <div className="flex items-center mb-1">
                           <div className="flex items-center">
