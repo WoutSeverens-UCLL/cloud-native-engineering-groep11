@@ -116,7 +116,7 @@ const Header = () => {
                   className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
                 >
                   <ShoppingCart className="h-4 w-4" />
-                  orders
+                  Orders
                 </Link>
 
                 <button
@@ -145,6 +145,14 @@ const Header = () => {
                 >
                   <BaggageClaim className="h-4 w-4" />
                   My products
+                </Link>
+
+                <Link
+                  href="/orders"
+                  className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Orders
                 </Link>
 
                 <button
@@ -252,6 +260,16 @@ const Header = () => {
                     >
                       <ShoppingCart className="h-4 w-4" />
                       Products
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/orders"
+                      className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                      Orders
                     </Link>
                   </li>
                   <li>
