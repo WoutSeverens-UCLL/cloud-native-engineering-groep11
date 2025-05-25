@@ -49,12 +49,14 @@ Om de backend te stoppen, gebruik ctrl + c en bevestig met yes.
 
 Backend API: http://localhost:7071/api
 
+### Stap 3: Installeer dependencies en start de frontend
+
 **Frontend:**
 Navigeer naar de frontend folder en voer de volgende commando’s uit:
-Open een nieuwe terminal in de frontend folder
-Doe het commando npm install
-Doe het commando npm run dev om de frontend op te starten
-Doe ctr-c yes om de frontend af te sluiten
+- npm install
+- npm run dev 
+
+Om de frontend te stoppen, gebruik ctrl+c en bevestig met yes.
 
 Frontend API: http://localhost:8000/
 
