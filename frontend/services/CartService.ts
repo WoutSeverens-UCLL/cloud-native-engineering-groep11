@@ -95,26 +95,6 @@ const clearItemFromCart = async (userId: string) => {
   );
 };
 
-const updateQuantity = async (
-  itemId: string,
-  userId: string,
-  quantity: number
-) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL +
-      `/carts/${userId}/items/${itemId}/quantity` +
-      process.env.FK_CARTS_UPDATE_QUANTITY,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify({ quantity }),
-    }
-  );
-};
-
 const CartService = {
   createCart,
   getCart,
@@ -122,7 +102,6 @@ const CartService = {
   addItemToCart,
   removeItemFromCart,
   clearItemFromCart,
-  updateQuantity,
 };
 
 export default CartService;

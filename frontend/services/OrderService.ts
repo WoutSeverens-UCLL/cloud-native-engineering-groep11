@@ -47,18 +47,6 @@ const getProductsByOrderId = (orderId: string) => {
   );
 };
 
-const getProductsByOrderId = (orderId: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/orders/products/${orderId}/all`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
-};
 
 const updateOrderStatus = (
   id: string,
@@ -140,18 +128,6 @@ const getPartitionKeyForOrder = (id: string) => {
   );
 };
 
-const getPartitionKeyForOrder = (id: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL + `/orders/buyer/partitionKey/${id}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
-};
 
 const OrderService = {
   createOrder,
