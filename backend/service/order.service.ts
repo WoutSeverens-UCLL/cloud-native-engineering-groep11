@@ -19,7 +19,7 @@ export class OrderService {
 
   async createOrder(order: Order) {
     const createdOrder = new Order({
-      productId: order.productId,
+      products: order.products,
       sellerId: order.sellerId,
       buyerId: order.buyerId,
       quantity: order.quantity,
@@ -35,11 +35,25 @@ export class OrderService {
     return (await this.getRepo()).getAllOrders();
   }
 
+  async getProductsByOrderId(orderId: string) {
+    if (!orderId) {
+      throw CustomError.invalid("Order ID is invalid");
+    }
+    return (await this.getRepo()).getProductsByOrderId(orderId);
+  }
+
   async getOrder(id: string, buyerId: string) {
     if (!id) {
       throw CustomError.invalid("Id is invalid");
     }
     return (await this.getRepo()).getOrder(id, buyerId);
+  }
+
+  async getPartitionKeyForOrder(orderId: string) {
+    if (!orderId) {
+      throw CustomError.invalid("Order ID is invalid");
+    }
+    return (await this.getRepo()).getPartitionKeyForOrder(orderId);
   }
 
   async getOrdersByBuyerId(buyerId: string) {
@@ -71,8 +85,8 @@ export class OrderService {
   }
 
   async updateOrderStatus(id: string, buyerId: string, status: OrderStatus) {
-    if (!id) {
-      throw CustomError.invalid("Id is invalid");
+    if (!id || !buyerId || !status) {
+      throw CustomError.invalid("Id, Buyer ID or Status is invalid");
     }
     return (await this.getRepo()).updateOrderStatus(id, buyerId, status);
   }
