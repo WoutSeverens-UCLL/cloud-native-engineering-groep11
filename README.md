@@ -41,7 +41,7 @@ Navigeer naar de `serverless-backend` folder en maak de volgende bestanden aan:
 ```
 ### Stap 2: Installeer dependencies en start de backend
 Voer de volgende commando's uit in de serverless-backend folder:
-- nmp install
+- npm install
 - npm run build
 - func start
 
@@ -60,7 +60,7 @@ Om de frontend te stoppen, gebruik ctrl+c en bevestig met yes.
 
 Frontend API: http://localhost:8000/
 
-**Extern**
+## Extern gebruiken
 Gebruik de live versie van de applicatie via de volgende link:
 https://cne11blob.z1.web.core.windows.net/
 
