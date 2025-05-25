@@ -26,12 +26,25 @@ const getOrder = (id: string, buyerId: string) => {
   });
 };
 
+const getProductsByOrderId = (orderId: string) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL + `/orders/products/${orderId}/all`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+};
+
 const updateOrderStatus = (
   id: string,
   buyerId: string,
   status: OrderStatus
 ) => {
-  return fetch(process.env.NEXT_PUBLIC_API_URL + `/orders/${id}/${buyerId}`, {
+  return fetch(process.env.NEXT_PUBLIC_API_URL + `/orders/${id}/${buyerId}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -79,6 +92,19 @@ const deleteOrder = (id: string, buyerId: string) => {
   });
 };
 
+const getPartitionKeyForOrder = (id: string) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL + `/orders/buyer/partitionKey/${id}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+};
+
 const OrderService = {
   createOrder,
   getOrder,
@@ -86,6 +112,8 @@ const OrderService = {
   getOrdersByUser,
   getOrdersByProduct,
   deleteOrder,
+  getPartitionKeyForOrder,
+  getProductsByOrderId,
 };
 
 export default OrderService;
