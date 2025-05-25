@@ -60,7 +60,7 @@ Om de frontend te stoppen, gebruik ctrl+c en bevestig met yes.
 
 Frontend API: http://localhost:8000/
 
-**Extern**
+## Extern gebruiken
 Gebruik de live versie van de applicatie via de volgende link:
 https://cne11blob.z1.web.core.windows.net/
 
