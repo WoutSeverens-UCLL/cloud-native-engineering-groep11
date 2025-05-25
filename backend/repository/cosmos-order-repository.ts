@@ -2,10 +2,11 @@ import { Container, CosmosClient } from "@azure/cosmos";
 import { Order } from "../model/order";
 import { OrderStatus } from "../types";
 import { CustomError } from "../model/custom-error";
+import { Product } from "../model/product";
 
 interface CosmosDocument {
   id?: string;
-  productId: string;
+  products: Product[];
   sellerId: string;
   buyerId: string;
   quantity: number;
@@ -20,7 +21,7 @@ export class CosmosOrderRepository {
 
   private toOrder(document: CosmosDocument) {
     if (
-      !document.productId ||
+      !document.products ||
       !document.sellerId ||
       !document.buyerId ||
       !document.quantity ||
@@ -33,7 +34,7 @@ export class CosmosOrderRepository {
 
     return new Order({
       id: document.id,
-      productId: document.productId,
+      products: document.products,
       sellerId: document.sellerId,
       buyerId: document.buyerId,
       quantity: document.quantity,
@@ -82,7 +83,7 @@ export class CosmosOrderRepository {
 
   async createOrder(order: Order): Promise<Order> {
     const result = await this.container.items.create({
-      productId: order.productId,
+      products: order.products,
       sellerId: order.sellerId,
       buyerId: order.buyerId,
       quantity: order.quantity,
@@ -119,6 +120,35 @@ export class CosmosOrderRepository {
     return resources.map((doc) => this.toOrder(doc));
   }
 
+  async getPartitionKeyForOrder(orderId: string): Promise<string> {
+    try {
+      const query = {
+        query: "SELECT VALUE c.buyerId FROM c WHERE c.id = @id",
+        parameters: [
+          {
+            name: "@id",
+            value: orderId,
+          },
+        ],
+      };
+
+      const { resources } = await this.container.items.query(query).fetchAll();
+      console.log("Resources gevonden:", resources);
+
+      if (!resources || resources.length === 0) {
+        throw CustomError.notFound(`Product met ID ${orderId} niet gevonden`);
+      }
+
+      return resources[0] as string;
+    } catch (error) {
+      console.error(
+        `Fout bij ophalen partition key voor product ${orderId}:`,
+        error
+      );
+      throw error;
+    }
+  }
+
   async getOrdersByBuyerId(buyerId: string): Promise<Order[]> {
     const query = {
       query: "SELECT * FROM c WHERE c.buyerId = @buyerId",
@@ -132,6 +162,20 @@ export class CosmosOrderRepository {
       throw CustomError.notFound("No orders found for this buyer.");
     }
     return resources.map((doc) => this.toOrder(doc));
+  }
+
+  async getProductsByOrderId(orderId: string): Promise<Product[]> {
+    const query = {
+      query: "SELECT c.products FROM c WHERE c.id = @orderId",
+      parameters: [{ name: "@orderId", value: orderId }],
+    };
+
+    const { resources } = await this.container.items.query(query).fetchAll();
+    if (!resources || resources.length === 0) {
+      throw CustomError.notFound("No products found for this order.");
+    }
+
+    return resources.flatMap((doc) => doc.products ?? []);
   }
 
   async getOrdersBySellerId(sellerId: string): Promise<Order[]> {
