@@ -228,7 +228,10 @@ const CartPage = () => {
                     <p className="text-muted-foreground mt-2">
                       Browse our products and add items to your cart.
                     </p>
-                    <Button asChild className="mt-4">
+                    <Button
+                      asChild
+                      className="mt-4 bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                    >
                       <Link href="/products">Browse Products</Link>
                     </Button>
                   </div>
@@ -243,27 +246,6 @@ const CartPage = () => {
                           <h3 className="text-lg font-semibold">
                             {product.name}
                           </h3>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => {}}
-                              disabled={quantity <= 1 || isLoading}
-                            >
-                              <Minus className="h-4 w-4" />
-                            </Button>
-                            <span className="min-w-[3ch] text-center">
-                              {quantity}
-                            </span>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => {}}
-                              disabled={isLoading}
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-medium">
