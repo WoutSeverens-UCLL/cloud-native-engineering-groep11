@@ -44,6 +44,7 @@ Voer de volgende commando's uit in de serverless-backend folder:
 - nmp install
 - npm run build
 - func start
+
 Om de backend te stoppen, gebruik ctrl + c en bevestig met yes.
 
 Backend API: http://localhost:7071/api
