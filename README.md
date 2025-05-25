@@ -6,24 +6,6 @@ Open het uitgepakte bestand met Visual Studio Code of een IDE dat je prefereert
 **Backend:**
 ### Stap 1: Maak de configuratiebestanden aan
 Navigeer naar de `serverless-backend` folder en maak de volgende bestanden aan:
-#### `host.json`
-```json
-{
-  "version": "2.0",
-  "logging": {
-    "applicationInsights": {
-      "samplingSettings": {
-        "isEnabled": true,
-        "excludedTypes": "Request"
-      }
-    }
-  },
-  "extensionBundle": {
-    "id": "Microsoft.Azure.Functions.ExtensionBundle",
-    "version": "[4.*, 5.0.0)"
-  }
-}
-```
 
 #### `local.settings.json`
 ```json
