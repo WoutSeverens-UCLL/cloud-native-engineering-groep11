@@ -21,7 +21,7 @@ const getAllProducts = () => {
 const getProduct = (id: string, sellerId: string) => {
   return fetch(
     process.env.NEXT_PUBLIC_API_URL +
-      `/products/${id}/${sellerId}` +
+      `/products/id/${id}/seller/${sellerId}` +
       process.env.FK_PRODUCTS_GET_BY_ID_SELLER_ID,
     {
       method: "GET",
