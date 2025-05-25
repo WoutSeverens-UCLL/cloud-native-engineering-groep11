@@ -112,7 +112,7 @@ const ProductCard: React.FC<Props> = ({ product }) => {
         <Link href={`/products/${product.id}/${product.sellerId}`}>
           <h3 className="font-semibold text-lg line-clamp-2 mb-1.5">
             {product.name}
-          </h3>s
+          </h3>
         </Link>
         <div className="font-bold">€ {product.price?.toFixed(2)}</div>
       </CardContent>
