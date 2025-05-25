@@ -108,7 +108,7 @@ const UserSignupPage: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto mt-12">
-      <Card className="shadow-lg border-t-4 border-t-purple-700">
+      <Card className="shadow-lg border-gray-200 border-t-4 border-t-purple-700">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
             Sign up to Shopy
@@ -136,13 +136,15 @@ const UserSignupPage: React.FC = () => {
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label className="font-semibold" htmlFor="firstName">
+                First Name
+              </Label>
               <div className="relative">
                 <Input
                   id="firstName"
                   type="text"
                   placeholder="Enter your first name"
-                  className="pl-10"
+                  className="pl-10 border-gray-200"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
@@ -153,13 +155,15 @@ const UserSignupPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label className="font-semibold" htmlFor="lastName">
+                Last Name
+              </Label>
               <div className="relative">
                 <Input
                   id="lastName"
                   type="text"
                   placeholder="Enter your last name"
-                  className="pl-10"
+                  className="pl-10 border-gray-200"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
@@ -170,14 +174,16 @@ const UserSignupPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label className="font-semibold" htmlFor="email">
+                Email
+              </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="pl-10"
+                  className="pl-10 border-gray-200"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -188,20 +194,22 @@ const UserSignupPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label className="font-semibold" htmlFor="password">
+                Password
+              </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-500" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="pl-10"
+                  className="pl-10 border-gray-200"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-2.5 text-gray-500 hover:text-black"
                   onClick={togglePasswordVisibility}
                   tabIndex={-1}
                 >
@@ -218,13 +226,15 @@ const UserSignupPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
+              <Label className="font-semibold" htmlFor="role">
+                Role
+              </Label>
               <div className="relative">
                 <Input
                   id="role"
                   type="text"
                   placeholder="Enter your role"
-                  className="pl-10"
+                  className="pl-10 border-gray-200"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 />

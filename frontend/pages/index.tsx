@@ -1,10 +1,33 @@
 import Header from "@components/header";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { User } from "types";
 
 const Home = () => {
   const router = useRouter();
+  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const loggedInUserString = sessionStorage.getItem("loggedInUser");
+    if (loggedInUserString !== null) {
+      setLoggedInUser(JSON.parse(loggedInUserString));
+    }
+  }, []);
+
   const handleGetStarted = () => {
-    router.push("/login");
+    if (!loggedInUser) {
+      router.push("/login");
+    }
+    if (loggedInUser && loggedInUser.role === "admin") {
+      router.push("/users");
+    }
+    if (loggedInUser && loggedInUser.role === "buyer") {
+      router.push("/products");
+    }
+    if (loggedInUser && loggedInUser.role === "seller") {
+      router.push("/myproducts");
+    }
   };
 
   return (
