@@ -22,6 +22,7 @@ export type Product = {
   features?: string[];
   reviews?: Review[];
   sellerId?: string;
+  quantity?: number;
 };
 
 export type Review = {
@@ -34,7 +35,7 @@ export type Review = {
 
 export type Order = {
   id?: string;
-  productId?: string;
+  products?: Product[];
   sellerId?: string;
   buyerId?: string;
   quantity?: number;
@@ -44,7 +45,7 @@ export type Order = {
   updatedAt?: string;
 };
 
-export type OrderStatus = "pending" | "completed" | "failed" | "cancelled";
+export type OrderStatus = "pending" | "completed" | "shipped";
 
 export type Payment = {
   id?: string;
@@ -84,4 +85,5 @@ export type CartItem = {
   productId?: string;
   quantity?: number;
   price?: number;
+  color?: string;
 };
