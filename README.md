@@ -41,7 +41,7 @@ Navigeer naar de `serverless-backend` folder en maak de volgende bestanden aan:
 ```
 ### Stap 2: Installeer dependencies en start de backend
 Voer de volgende commando's uit in de serverless-backend folder:
-- nmp install
+- npm install
 - npm run build
 - func start
 
