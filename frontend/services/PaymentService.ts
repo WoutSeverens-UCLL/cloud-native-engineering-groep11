@@ -17,7 +17,7 @@ const createPayment = (payment: Payment) => {
   });
 };
 
-const getPaymentByOrderId = (orderId: string) => {
+const getPaymentsByOrderId = (orderId: string) => {
   return fetch(process.env.NEXT_PUBLIC_API_URL + `/payments/order/${orderId}`, {
     method: "GET",
     headers: {
@@ -117,7 +117,7 @@ const validateCardDetails = (
 
 const PaymentService = {
   createPayment,
-  getPaymentByOrderId,
+  getPaymentsByOrderId,
   processPayment,
   validateCardDetails,
 };
