@@ -1,8 +1,9 @@
 import { OrderStatus } from "../types";
+import { Product } from "./product";
 
 export class Order {
   readonly id?: string;
-  readonly productId: string;
+  readonly products: Product[];
   readonly sellerId: string;
   readonly buyerId: string;
   readonly quantity: number;
@@ -13,7 +14,7 @@ export class Order {
 
   constructor(order: {
     id?: string;
-    productId: string;
+    products: Product[];
     sellerId: string;
     buyerId: string;
     quantity: number;
@@ -24,7 +25,7 @@ export class Order {
   }) {
     this.validate(order);
     this.id = order.id;
-    this.productId = order.productId;
+    this.products = order.products;
     this.sellerId = order.sellerId;
     this.buyerId = order.buyerId;
     this.quantity = order.quantity;
@@ -36,7 +37,7 @@ export class Order {
 
   validate(order: {
     id?: string;
-    productId: string;
+    products: Product[];
     sellerId: string;
     buyerId: string;
     quantity: number;
@@ -45,8 +46,12 @@ export class Order {
     createdAt: string;
     updatedAt?: string;
   }) {
-    if (!order.productId || typeof order.productId !== "string") {
-      throw new Error("Invalid Product ID");
+    if (
+      !order.products ||
+      !Array.isArray(order.products) ||
+      order.products.length === 0
+    ) {
+      throw new Error("Invalid Products");
     }
     if (!order.sellerId || typeof order.sellerId !== "string") {
       throw new Error("Invalid Seller ID");
@@ -64,7 +69,7 @@ export class Order {
 
   equals({
     id,
-    productId,
+    products,
     sellerId,
     buyerId,
     quantity,
@@ -74,7 +79,7 @@ export class Order {
     updatedAt,
   }: {
     id?: string;
-    productId: string;
+    products: Product[];
     sellerId: string;
     buyerId: string;
     quantity: number;
@@ -85,7 +90,7 @@ export class Order {
   }) {
     return (
       this.id === id &&
-      this.productId === productId &&
+      this.products.length === products.length &&
       this.sellerId === sellerId &&
       this.buyerId === buyerId &&
       this.quantity === quantity &&
