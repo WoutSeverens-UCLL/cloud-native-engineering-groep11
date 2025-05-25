@@ -41,6 +41,20 @@ orderRouter.get(
 );
 
 orderRouter.get(
+  "/products/:orderId/all",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await OrderService.getInstance().getProductsByOrderId(
+        req.params.orderId
+      );
+      res.status(200).json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+orderRouter.get(
   "/product/:productId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -98,7 +112,7 @@ orderRouter.delete(
 );
 
 orderRouter.patch(
-  "/:id/:buyerId",
+  "/:id/:buyerId/status",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id, buyerId } = req.params;
@@ -110,6 +124,21 @@ orderRouter.patch(
         status
       );
       res.status(200).json(updatedOrder);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+orderRouter.get(
+  "/buyer/partitionkey/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log("Incoming productId:", req.params.id);
+      const buyerId = await OrderService.getInstance().getPartitionKeyForOrder(
+        req.params.id
+      );
+      res.status(200).json({ buyerId });
     } catch (error) {
       next(error);
     }
