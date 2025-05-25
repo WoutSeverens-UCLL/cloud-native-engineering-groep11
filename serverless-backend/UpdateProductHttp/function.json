@@ -5,8 +5,8 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["get", "post", "delete", "put"],
-      "route": "UpdateProductHttp/{id?}"
+      "methods": [ "put"],
+      "route": "products/{id?}"
     },
     {
       "type": "http",
