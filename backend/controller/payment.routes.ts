@@ -75,4 +75,22 @@ paymentRouter.delete(
   }
 );
 
+paymentRouter.patch(
+  "/:id/:orderId/status",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { status } = req.body;
+      const updatedPayment =
+        await PaymentService.getInstance().updatePaymentStatus(
+          req.params.id,
+          req.params.orderId,
+          status
+        );
+      res.status(200).json(updatedPayment);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export { paymentRouter };
