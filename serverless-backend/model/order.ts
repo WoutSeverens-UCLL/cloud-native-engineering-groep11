@@ -6,7 +6,7 @@ export class Order {
   readonly products: Product[];
   readonly sellerId: string;
   readonly buyerId: string;
-  readonly quantity: number;
+  readonly orderQuantity: number;
   readonly totalAmount: number;
   readonly status: OrderStatus;
   readonly createdAt: string;
@@ -17,7 +17,7 @@ export class Order {
     products: Product[];
     sellerId: string;
     buyerId: string;
-    quantity: number;
+    orderQuantity: number;
     totalAmount: number;
     status: OrderStatus;
     createdAt: string;
@@ -28,7 +28,7 @@ export class Order {
     this.products = order.products;
     this.sellerId = order.sellerId;
     this.buyerId = order.buyerId;
-    this.quantity = order.quantity;
+    this.orderQuantity = order.orderQuantity;
     this.totalAmount = order.totalAmount;
     this.status = order.status;
     this.createdAt = order.createdAt;
@@ -40,7 +40,7 @@ export class Order {
     products: Product[];
     sellerId: string;
     buyerId: string;
-    quantity: number;
+    orderQuantity: number;
     totalAmount: number;
     status: OrderStatus;
     createdAt: string;
@@ -59,7 +59,7 @@ export class Order {
     if (!order.buyerId || typeof order.buyerId !== "string") {
       throw new Error("Invalid Buyer ID");
     }
-    if (typeof order.quantity !== "number" || order.quantity <= 0) {
+    if (typeof order.orderQuantity !== "number" || order.orderQuantity <= 0) {
       throw new Error("Invalid Quantity");
     }
     if (typeof order.totalAmount !== "number" || order.totalAmount <= 0) {
@@ -72,7 +72,7 @@ export class Order {
     products,
     sellerId,
     buyerId,
-    quantity,
+    orderQuantity,
     totalAmount,
     status,
     createdAt,
@@ -82,7 +82,7 @@ export class Order {
     products: Product[];
     sellerId: string;
     buyerId: string;
-    quantity: number;
+    orderQuantity: number;
     totalAmount: number;
     status: OrderStatus;
     createdAt: string;
@@ -93,7 +93,7 @@ export class Order {
       this.products.length === products.length &&
       this.sellerId === sellerId &&
       this.buyerId === buyerId &&
-      this.quantity === quantity &&
+      this.orderQuantity === orderQuantity &&
       this.totalAmount === totalAmount &&
       this.status === status &&
       this.createdAt === createdAt &&
