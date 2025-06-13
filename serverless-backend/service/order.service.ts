@@ -22,7 +22,7 @@ export class OrderService {
       products: order.products,
       sellerId: order.sellerId,
       buyerId: order.buyerId,
-      quantity: order.quantity,
+      orderQuantity: order.orderQuantity,
       totalAmount: order.totalAmount,
       status: order.status,
       createdAt: order.createdAt,
