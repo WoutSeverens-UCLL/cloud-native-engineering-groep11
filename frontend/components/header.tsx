@@ -24,32 +24,19 @@ const Header = () => {
     }
   }, []);
 
-  const handleCart = async () => {
+  const handleCart = () => {
     if (!loggedInUser) {
       alert("Please log in to view your cart.");
       router.push("/login");
+      return;
     }
 
-    const response = await CartService.getCartByUserId(
-      loggedInUser?.email ?? ""
-    );
-
-    const exisitingCart = await response.json();
-
-    if (exisitingCart) {
-      router.push("/cart");
-    } else {
-      await CartService.createCart({
-        userId: loggedInUser?.email ?? "",
-        items: [],
-        updatedAt: new Date(),
-      });
-      router.push("/cart");
-    }
+    router.push("/cart");
   };
 
   const handleLogout = () => {
     sessionStorage.removeItem("loggedInUser");
+    sessionStorage.removeItem("cart");
     setLoggedInUser(null);
     setTimeout(() => {
       router.push("/login");
