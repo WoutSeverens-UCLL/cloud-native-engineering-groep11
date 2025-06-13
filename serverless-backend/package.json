@@ -21,6 +21,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.2"
+    "bcryptjs": "^3.0.2",
+    "redis": "^5.5.6"
   }
 }
