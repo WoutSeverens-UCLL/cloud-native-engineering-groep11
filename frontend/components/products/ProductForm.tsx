@@ -260,7 +260,7 @@ export default function ProductForm({
                   <FormLabel className="font-semibold">Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Product description border-gray-200"
+                      placeholder="Product description"
                       className="min-h-[120px] border-gray-200"
                       {...field}
                     />
@@ -280,7 +280,12 @@ export default function ProductForm({
                   value={newImage}
                   onChange={(e) => setNewImage(e.target.value)}
                 />
-                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addImage} size="sm">
+                <Button
+                  className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                  type="button"
+                  onClick={addImage}
+                  size="sm"
+                >
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -318,7 +323,12 @@ export default function ProductForm({
                   value={newColor}
                   onChange={(e) => setNewColor(e.target.value)}
                 />
-                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addColor} size="sm">
+                <Button
+                  className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                  type="button"
+                  onClick={addColor}
+                  size="sm"
+                >
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -356,7 +366,12 @@ export default function ProductForm({
                   value={newSize}
                   onChange={(e) => setNewSize(e.target.value)}
                 />
-                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addSize} size="sm">
+                <Button
+                  className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                  type="button"
+                  onClick={addSize}
+                  size="sm"
+                >
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -394,7 +409,12 @@ export default function ProductForm({
                   value={newFeature}
                   onChange={(e) => setNewFeature(e.target.value)}
                 />
-                <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="button" onClick={addFeature} size="sm">
+                <Button
+                  className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                  type="button"
+                  onClick={addFeature}
+                  size="sm"
+                >
                   <PlusCircle className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -423,10 +443,19 @@ export default function ProductForm({
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button className="cursor-pointer border-gray-300 hover:bg-gray-200" type="button" variant="outline" onClick={onCancel}>
+              <Button
+                className="cursor-pointer border-gray-300 hover:bg-gray-200"
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+              >
                 Cancel
               </Button>
-              <Button className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer" type="submit" disabled={isSubmitting}>
+              <Button
+                className="bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
+                type="submit"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? "Processing..." : submitButtonText}
               </Button>
             </div>
