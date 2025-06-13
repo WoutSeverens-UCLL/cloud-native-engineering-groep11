@@ -15,12 +15,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Cart, Product, User } from "types";
+import { CartItem, Product, User } from "types";
 
 const CartPage = () => {
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-  const [cart, setCart] = useState<Cart | null>(null);
   const [cartProducts, setCartProducts] = useState<
     { itemId: string; quantity: number; product: Product }[]
   >([]);
@@ -40,31 +39,27 @@ const CartPage = () => {
   }, []);
 
   useEffect(() => {
-    const fetchCartAndProducts = async () => {
-      if (!loggedInUser?.email) return;
-
-      const response = await CartService.getCartByUserId(loggedInUser.email);
-      const cart = await response.json();
-      setCart(cart);
-
-      if (!cart?.items?.length) return;
-
+    const fetchCartProducts = async () => {
+      const localItems = CartService.getCart();
+      console.log("Cart items:", localItems);
       const detailedItems = await Promise.all(
-        cart.items.map(async (item: any) => {
+        localItems.map(async (item: CartItem) => {
           const sellerIdResponse =
-            await ProductService.getPartitionKeyForProduct(item.productId);
+            await ProductService.getPartitionKeyForProduct(
+              item.productId || ""
+            );
           const sellerData = await sellerIdResponse.json();
           const sellerId = sellerData.sellerId;
 
           const productResponse = await ProductService.getProduct(
-            item.productId,
+            item.productId || "",
             sellerId
           );
           const product = await productResponse.json();
 
           return {
-            itemId: item.productId,
-            quantity: item.quantity,
+            itemId: item.productId ?? "",
+            quantity: item.productQuantity ?? 0,
             product,
           };
         })
@@ -73,17 +68,14 @@ const CartPage = () => {
       setCartProducts(detailedItems);
     };
 
-    fetchCartAndProducts();
-  }, [loggedInUser]);
+    fetchCartProducts();
+  }, []);
 
   const clearCart = async () => {
-    if (!loggedInUser?.email) return;
-
     try {
       setIsLoading(true);
-      await CartService.clearItemFromCart(loggedInUser.email);
+      CartService.clearCart();
       toast.success("Cart cleared!");
-      setCart(null);
       setCartProducts([]);
     } catch (error) {
       console.error("Failed to clear cart:", error);
@@ -209,7 +201,7 @@ const CartPage = () => {
           </Link>
 
           <h1 className="text-3xl font-bold mt-4 mb-2">Your Shopping Cart</h1>
-          <p className="text-gray-600">{cart?.items?.length} items</p>
+          <p className="text-gray-600">{cartProducts.length} items</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -246,6 +238,7 @@ const CartPage = () => {
                           <h3 className="text-lg font-semibold">
                             {product.name}
                           </h3>
+                          <p className="text-sm text-gray-500">{quantity}x</p>
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-medium">
@@ -261,7 +254,7 @@ const CartPage = () => {
               <CardFooter className="justify-between">
                 <Button
                   variant="outline"
-                  disabled={cart?.items?.length === 0 || isLoading}
+                  disabled={cartProducts.length === 0 || isLoading}
                   onClick={() => clearCart()}
                   className="cursor-pointer border-gray-300 hover:bg-gray-200 font-semibold"
                 >
