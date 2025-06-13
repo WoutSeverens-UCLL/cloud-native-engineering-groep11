@@ -1,107 +1,68 @@
 import { Cart, CartItem } from "types";
 
-const getToken = (): string => {
-  const loggedInUserString = sessionStorage.getItem("loggedInUser");
-  return loggedInUserString ? JSON.parse(loggedInUserString).token : "";
+const saveCart = (items: CartItem[]) => {
+  const cartRaw = sessionStorage.getItem("cart");
+  let cart: Partial<Cart> = {};
+  if (cartRaw) {
+    try {
+      cart = JSON.parse(cartRaw);
+    } catch {}
+  }
+  const newCart: Cart = {
+    items,
+    updatedAt: new Date(),
+  };
+  sessionStorage.setItem("cart", JSON.stringify(newCart));
 };
 
-const createCart = async (cart: Cart) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL + "/carts" + process.env.FK_CARTS_CREATE,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify(cart),
-    }
-  );
+const getCart = (): CartItem[] => {
+  const cartRaw = sessionStorage.getItem("cart");
+  if (!cartRaw) return [];
+  try {
+    const cart: Cart = JSON.parse(cartRaw);
+    return Array.isArray(cart.items) ? cart.items : [];
+  } catch {
+    return [];
+  }
 };
 
-const getCart = async (id: string, userId: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL +
-      `/carts/${id}/user/${userId}` +
-      process.env.FK_CARTS_GET_BY_ID_USER_ID,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+const addItemToCart = (item: CartItem) => {
+  const items = getCart();
+  const index = items.findIndex((i) => i.productId === item.productId);
+  if (index !== -1) {
+    items[index].productQuantity =
+      (items[index].productQuantity ?? 0) + (item.productQuantity ?? 1);
+  } else {
+    items.push(item);
+  }
+  saveCart(items);
 };
 
-const getCartByUserId = async (userId: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL +
-      `/carts/${userId}` +
-      process.env.FK_CARTS_GET_BY_USER_ID,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+const removeItemFromCart = (productId: string) => {
+  const cart = getCart().filter((item) => item.productId !== productId);
+  saveCart(cart);
 };
 
-const addItemToCart = async (item: CartItem, userId: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL +
-      `/carts/${userId}/items` +
-      process.env.FK_CARTS_ADD_ITEM,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify(item),
-    }
-  );
+const updateItemQuantity = (productId: string, quantity: number) => {
+  const cart = getCart();
+  const index = cart.findIndex((item) => item.productId === productId);
+
+  if (index !== -1) {
+    cart[index].productQuantity = quantity;
+    saveCart(cart);
+  }
 };
 
-const removeItemFromCart = async (itemId: string, userId: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL +
-      `/carts/${userId}/items/${itemId}` +
-      process.env.FK_CARTS_REMOVE_ITEM,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
-};
-
-const clearItemFromCart = async (userId: string) => {
-  return fetch(
-    process.env.NEXT_PUBLIC_API_URL +
-      `/carts/${userId}/items/all/clear` +
-      process.env.FK_CARTS_CLEAR,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
-  );
+const clearCart = () => {
+  sessionStorage.removeItem("cart");
 };
 
 const CartService = {
-  createCart,
   getCart,
-  getCartByUserId,
   addItemToCart,
   removeItemFromCart,
-  clearItemFromCart,
+  updateItemQuantity,
+  clearCart,
 };
 
 export default CartService;
