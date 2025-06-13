@@ -91,29 +91,15 @@ const ProductDetail = () => {
     }
 
     try {
-      const userId = loggedInUser.email ?? "";
-      const cartRes = await CartService.getCartByUserId(userId);
-      let cart = cartRes.ok ? await cartRes.json() : null;
-
-      if (!cart) {
-        const newCartRes = await CartService.createCart({
-          userId,
-          items: [],
-          updatedAt: new Date(),
-        });
-        if (!newCartRes.ok) throw new Error("Failed to create cart");
-        cart = await newCartRes.json();
-      }
+      if (!product) return;
 
       const item = {
         productId: product.id,
-        quantity,
+        productQuantity: quantity,
         price: product.price,
       };
 
-      const addRes = await CartService.addItemToCart(item, userId);
-      if (!addRes.ok) throw new Error("Failed to add item");
-
+      CartService.addItemToCart(item);
       toast.success("Product added to cart!");
     } catch (err) {
       console.error("Add to cart failed", err);
@@ -444,8 +430,16 @@ const ProductDetail = () => {
 
             {/* Add to Cart button */}
             <Button
-              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer py-3 flex items-center justify-center"
-              onClick={handleAddToCart}
+              className={`w-full bg-gradient-to-r from-purple-700 to-indigo-800 cursor-pointer ${
+                loggedInUser.role === "seller"
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:from-purple-800 hover:to-indigo-900"
+              } text-white font-semibold py-3 flex items-center justify-center`}
+              onClick={() => {
+                if (loggedInUser.role !== "seller") {
+                  handleAddToCart();
+                }
+              }}
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
               Add to Cart
