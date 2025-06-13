@@ -19,6 +19,7 @@ interface CosmosDocument {
   features?: string[];
   reviews?: Review[];
   sellerId: string;
+  productQuantity?: number;
 }
 
 export class CosmosProductRepository {
@@ -52,6 +53,7 @@ export class CosmosProductRepository {
       features: document.features,
       reviews: document.reviews,
       sellerId: document.sellerId,
+      productQuantity: document.productQuantity,
     });
   }
 
@@ -123,6 +125,7 @@ export class CosmosProductRepository {
       features: product.features,
       reviews: product.reviews,
       sellerId: product.sellerId,
+      productQuantity: product.productQuantity,
     });
 
     if (!result.resource || !result.resource.id) {
