@@ -138,14 +138,11 @@ const CheckoutPage = () => {
         }
         const productData: Product = await productResponse.json();
 
-        const productWithQuantity = {
-          ...productData,
-          productQuantity: item.productQuantity,
-        };
-
         orderProducts.push({
           ...productData,
           productQuantity: item.productQuantity,
+          productColor: item.color,
+          productSize: item.size,
         });
         totalAmount += (productData.price ?? 0) * item.productQuantity;
         totalQuantity += item.productQuantity;
