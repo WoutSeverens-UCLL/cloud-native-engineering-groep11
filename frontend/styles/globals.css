@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+.product-image-swiper {
+  width: 100%;
+  height: 400px;
+}
+
+.product-image-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-image-swiper .swiper-button-next,
+.product-image-swiper .swiper-button-prev {
+  color: #7c3aed !important;
+}
+
+.product-image-swiper .swiper-pagination-bullet-active {
+  background-color: #7c3aed !important;
+}
