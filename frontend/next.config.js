@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     // API Base URL
-    NEXT_PUBLIC_API_URL: "http://localhost:7071/api",
+    NEXT_PUBLIC_API_URL: "https://cne11blob.z1.web.core.windows.net/api",
 
     // User Functions
     FK_USERS_LOGIN:
