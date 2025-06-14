@@ -34,7 +34,6 @@ export class CosmosProductRepository {
       !document.description ||
       !document.price ||
       !document.category ||
-      !document.stock ||
       !document.sellerId
     ) {
       throw CustomError.internal("Invalid product document.");
