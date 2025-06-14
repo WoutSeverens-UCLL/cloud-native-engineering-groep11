@@ -282,45 +282,58 @@ const OrderDetailPage = () => {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   {/* Products Section with individual quantities */}
-                  {rawProducts &&
-                    rawProducts.length > 0 && ( // Use aggregatedProducts here
-                      <div className="space-y-4">
-                        <p className="text-sm text-gray-500">
-                          Products Ordered
-                        </p>
-                        {rawProducts.map((product) => (
-                          <div
-                            key={product.id}
-                            className="flex justify-between items-center"
-                          >
-                            <div className="flex items-center gap-3">
-                              <ShoppingCart className="h-4 w-4 text-gray-500" />
+                  {rawProducts && rawProducts.length > 0 && (
+                    <div className="space-y-4">
+                      <p className="text-sm text-gray-500">Products Ordered</p>
+                      {rawProducts.map((product) => (
+                        <div  
+                          key={product.id}
+                          className="flex justify-between items-center"
+                        >
+                          <div className="flex items-center gap-3">
+                            {/* Productafbeelding */}
+                            {product.images && (
+                              <img
+                                src={product.images[0]}
+                                alt={product.name}
+                                className="w-12 h-12 object-cover rounded"
+                              />
+                            )}
+                            <ShoppingCart className="h-4 w-4 text-purple-700" />
+                            <div>
                               <p className="font-semibold text-gray-900">
                                 {product.name}
                               </p>
-                              <p className="text-sm text-gray-500">
-                                {product.productQuantity}x
-                              </p>
+                              <div className="flex gap-2 text-xs text-gray-500">
+                                <span>Color: {product.productColor}</span>
+                                <span>Size: {product.productSize}</span>
+                              </div>
                             </div>
-                            <p className="text-gray-700">
-                              <span className="font-medium text-gray-900">
-                                €{" "}
-                                {(product.price ?? 0) *
-                                  (product.productQuantity ?? 1)}
-                              </span>
+                            <p className="text-sm text-gray-500">
+                              {product.productQuantity}x
                             </p>
                           </div>
-                        ))}
-                        <Separator className="bg-gray-200" />
-                      </div>
-                    )}
+                          <p className="text-gray-700">
+                            <span className="font-medium text-gray-900">
+                              €{" "}
+                              {(
+                                (product.price ?? 0) *
+                                (product.productQuantity ?? 1)
+                              ).toFixed(2)}
+                            </span>
+                          </p>
+                        </div>
+                      ))}
+                      <Separator className="bg-gray-200" />
+                    </div>
+                  )}
 
                   <div className="flex justify-between items-center">
                     <div className="space-y-1">
                       <p className="text-sm text-gray-500">Total Amount</p>
                       <p className="text-2xl font-bold text-green-600">
                         <Euro className="inline-block h-6 w-6 mr-1 -mt-1" />{" "}
-                        {order.totalAmount}
+                        {order.totalAmount?.toFixed(2) || "0.00"}
                         {/* Format total amount */}
                       </p>
                     </div>
