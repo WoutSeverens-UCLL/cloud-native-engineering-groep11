@@ -1,4 +1,4 @@
-import { Category, Colors, Sizes } from "../types";
+import { Category } from "../types";
 import { Review } from "./review";
 
 interface ProductParams {
@@ -9,14 +9,16 @@ interface ProductParams {
   brand?: string;
   images?: string[];
   rating?: number;
-  colors?: Colors[];
-  sizes?: Sizes[];
+  colors?: string[];
+  sizes?: string[];
   category: Category;
   stock: number;
   features?: string[];
   reviews?: Review[];
   sellerId: string;
   productQuantity?: number;
+  productColor?: string;
+  productSize?: string;
 }
 
 export class Product {
@@ -27,14 +29,16 @@ export class Product {
   readonly brand?: string;
   readonly images: string[];
   readonly rating: number;
-  readonly colors: Colors[];
-  readonly sizes: Sizes[];
+  readonly colors: string[];
+  readonly sizes: string[];
   readonly category: Category;
   readonly stock: number;
   readonly features: string[];
   readonly reviews: Review[];
   readonly sellerId: string;
   readonly productQuantity?: number;
+  readonly productColor?: string;
+  readonly productSize?: string;
 
   constructor({
     id,
@@ -52,6 +56,8 @@ export class Product {
     reviews = [],
     sellerId,
     productQuantity,
+    productColor,
+    productSize,
   }: ProductParams) {
     this.validate({ name, description, price, category, stock });
 
@@ -70,6 +76,8 @@ export class Product {
     this.reviews = reviews;
     this.sellerId = sellerId;
     this.productQuantity = productQuantity;
+    this.productColor = productColor;
+    this.productSize = productSize;
   }
 
   private validate({
