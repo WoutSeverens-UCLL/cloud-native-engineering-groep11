@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Product } from "types";
+import { Category, Product } from "types";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import {
@@ -23,7 +23,9 @@ const productSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters"),
   price: z.coerce.number().positive("Price must be positive"),
   brand: z.string().min(1, "Brand is required"),
-  category: z.string().min(1, "Category is required"),
+  category: z.nativeEnum(Category, {
+    errorMap: () => ({ message: "Please select a category" }),
+  }),
   stock: z.coerce
     .number()
     .int()
@@ -67,7 +69,7 @@ export default function ProductForm({
       description: initialData?.description ?? "",
       price: initialData?.price ?? 0,
       brand: initialData?.brand ?? "",
-      category: initialData?.category ?? "",
+      category: (initialData?.category as Category) ?? "",
       stock: initialData?.stock ?? 0,
     },
   });
@@ -115,6 +117,22 @@ export default function ProductForm({
 
   const removeFeature = (index: number) => {
     setFeatures(features.filter((_, i) => i !== index));
+  };
+
+  const getCategoryLabel = (key: Category) => {
+    const labels: Record<Category, string> = {
+      [Category.ELECTRONICS]: "Electronics",
+      [Category.CLOTHING]: "Clothing",
+      [Category.HOME]: "Home & Living",
+      [Category.BOOKS]: "Books",
+      [Category.TOYS]: "Toys",
+      [Category.SPORTS]: "Sports",
+      [Category.HEALTH]: "Health",
+      [Category.BEAUTY]: "Beauty",
+      [Category.AUTOMOTIVE]: "Automotive",
+      [Category.GROCERY]: "Grocery",
+    };
+    return labels[key];
   };
 
   // Handle form submission
@@ -240,11 +258,17 @@ export default function ProductForm({
                   <FormItem>
                     <FormLabel className="font-semibold">Category</FormLabel>
                     <FormControl>
-                      <Input
-                        className="border-gray-200"
-                        placeholder="Category"
+                      <select
                         {...field}
-                      />
+                        className="border-gray-200 rounded-md w-full px-3 py-2 text-sm text-gray-700"
+                      >
+                        <option value="">-- Select category --</option>
+                        {Object.values(Category).map((option) => (
+                          <option key={option} value={option}>
+                            {getCategoryLabel(option)}
+                          </option>
+                        ))}
+                      </select>
                     </FormControl>
                     <FormMessage className="text-red-600 text-sm" />
                   </FormItem>
