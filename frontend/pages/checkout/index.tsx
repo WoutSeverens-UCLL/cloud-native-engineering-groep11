@@ -52,7 +52,6 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 const CheckoutPage = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [cartTotal, setCartTotal] = useState(0);
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -92,13 +91,23 @@ const CheckoutPage = () => {
       }
       const user = JSON.parse(loggedInUserString);
 
-      const cartResponse = await CartService.getCartByUserId(user.email);
-      if (!cartResponse.ok) {
-        throw new Error("Failed to get cart items");
+      const cartRaw = sessionStorage.getItem("cart");
+      if (!cartRaw) {
+        throw new Error("Cart is empty");
       }
-      const cart = await cartResponse.json();
+
+      let cart;
+      try {
+        cart = JSON.parse(cartRaw);
+      } catch {
+        throw new Error("Cart data is corrupted");
+      }
 
       console.log("Cart items:", cart.items);
+
+      if (!Array.isArray(cart.items) || cart.items.length === 0) {
+        throw new Error("Cart is empty");
+      }
 
       // Prepare products for the single order
       const orderProducts: Product[] = [];
@@ -129,27 +138,25 @@ const CheckoutPage = () => {
         }
         const productData: Product = await productResponse.json();
 
-        // **FIX START HERE**
-        orderProducts.push(productData); // Add the fetched product to the orderProducts array
-        totalAmount += productData.price ?? 0 * item.quantity;
-        totalQuantity += item.quantity;
-        // Update total amount based on product price and cart quantity
-        // Assuming all products in a cart belong to the same seller for a single order.
-        // If not, you'd need to adjust your order creation logic to handle multiple orders per checkout.
+        const productWithQuantity = {
+          ...productData,
+          productQuantity: item.productQuantity,
+        };
+
+        orderProducts.push({
+          ...productData,
+          productQuantity: item.productQuantity,
+        });
+        totalAmount += (productData.price ?? 0) * item.productQuantity;
+        totalQuantity += item.productQuantity;
+
         if (!sellerId) {
-          // Set sellerId from the first product
           sellerId = sellerIdData.sellerId;
         } else if (sellerId !== sellerIdData.sellerId) {
-          // Handle cases where cart has items from different sellers
-          // For now, we'll throw an error or log a warning, as the current
-          // order creation assumes a single seller per order.
           console.warn(
             "Cart contains products from multiple sellers. Creating order for the first seller encountered."
           );
-          // You might want to implement logic to create multiple orders here
-          // or disallow checkout with items from multiple sellers.
         }
-        // **FIX END HERE**
       }
 
       totalAmount = parseFloat(totalAmount.toFixed(2));
@@ -158,13 +165,12 @@ const CheckoutPage = () => {
         throw new Error("No valid products found in cart to create an order.");
       }
 
-      // Create a single order with the list of products
       const order: Order = {
         products: orderProducts,
-        sellerId: sellerId, // This might need more complex logic if a cart can contain items from different sellers
+        sellerId: sellerId,
         buyerId: user.email,
         totalAmount: totalAmount,
-        quantity: totalQuantity,
+        orderQuantity: totalQuantity,
         status: "pending",
         createdAt: new Date().toISOString(),
       };
@@ -206,7 +212,7 @@ const CheckoutPage = () => {
         throw new Error("Payment processing failed");
       }
 
-      await CartService.clearItemFromCart(user.email);
+      CartService.clearCart();
       toast.success("Payment successful! Thank you for your purchase.");
       router.push("/thankyou");
     } catch (error) {

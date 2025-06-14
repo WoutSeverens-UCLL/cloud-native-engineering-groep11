@@ -2,7 +2,6 @@ import { CustomError } from "../model/custom-error";
 import { Product } from "../model/product";
 import { CosmosProductRepository } from "../repository/cosmos-product-repository";
 
-
 export class ProductService {
   private static intance: ProductService;
 
@@ -32,6 +31,7 @@ export class ProductService {
       features: product.features,
       reviews: product.reviews,
       sellerId: product.sellerId,
+      productQuantity: product.productQuantity,
     });
     return (await this.getRepo()).createProduct(createdProduct);
   }
@@ -67,7 +67,7 @@ export class ProductService {
     }
     return (await this.getRepo()).updateProduct(id, product);
   }
-  
+
   async getPartitionKeyForProduct(productId: string) {
     if (!productId) {
       throw CustomError.invalid("Product ID is invalid");

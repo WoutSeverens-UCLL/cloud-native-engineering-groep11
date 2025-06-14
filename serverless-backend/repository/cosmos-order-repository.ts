@@ -9,7 +9,7 @@ interface CosmosDocument {
   products: Product[];
   sellerId: string;
   buyerId: string;
-  quantity: number;
+  orderQuantity: number;
   totalAmount: number;
   status: OrderStatus;
   createdAt: string;
@@ -24,7 +24,7 @@ export class CosmosOrderRepository {
       !document.products ||
       !document.sellerId ||
       !document.buyerId ||
-      !document.quantity ||
+      !document.orderQuantity ||
       !document.totalAmount ||
       !document.status ||
       !document.createdAt
@@ -37,7 +37,7 @@ export class CosmosOrderRepository {
       products: document.products,
       sellerId: document.sellerId,
       buyerId: document.buyerId,
-      quantity: document.quantity,
+      orderQuantity: document.orderQuantity,
       totalAmount: document.totalAmount,
       status: document.status,
       createdAt: document.createdAt,
@@ -86,7 +86,7 @@ export class CosmosOrderRepository {
       products: order.products,
       sellerId: order.sellerId,
       buyerId: order.buyerId,
-      quantity: order.quantity,
+      orderQuantity: order.orderQuantity,
       totalAmount: order.totalAmount,
       status: order.status,
       createdAt: order.createdAt,

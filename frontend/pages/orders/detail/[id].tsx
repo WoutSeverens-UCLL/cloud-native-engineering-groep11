@@ -22,8 +22,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { Separator } from "@components/ui/separator";
 import { cn } from "@components/lib/utils";
 
-
-
 const OrderDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -56,7 +54,7 @@ const OrderDetailPage = () => {
 
       const orderResponse = await OrderService.getOrder(
         id as string,
-        buyerIdData.buyerId
+        buyerIdData.partitionKey
       );
       if (orderResponse.ok) {
         const orderData = await orderResponse.json();
@@ -71,10 +69,10 @@ const OrderDetailPage = () => {
           setRawProducts(productData);
         } else {
           console.warn(
-            `Failed to fetch product details for order ${orderData.id}` // Corrected to orderData.id
+            `Failed to fetch product details for order ${orderData.id}`
           );
           toast.error(
-            `Could not load product details for order ${orderData.id}` // Corrected to orderData.id
+            `Could not load product details for order ${orderData.id}`
           );
         }
 
@@ -104,26 +102,6 @@ const OrderDetailPage = () => {
   }, [id, router]);
 
   // Use useMemo to aggregate products and their quantities
-  const aggregatedProducts = useMemo(() => {
-    if (!rawProducts) return [];
-
-    const productMap = new Map<string, Product>();
-
-    rawProducts.forEach((product) => {
-      if (!product.id) return; // Skip products without an id
-      if (productMap.has(product.id)) {
-        // If product already exists in the map, increment its quantity
-        const existingProduct = productMap.get(product.id)!;
-        existingProduct.quantity = (existingProduct.quantity ?? 1) + 1;
-        productMap.set(product.id, existingProduct);
-      } else {
-        // If product is new, add it to the map with quantity 1
-        productMap.set(product.id, { ...product, quantity: 1 });
-      }
-    });
-
-    return Array.from(productMap.values());
-  }, [rawProducts]); // Recalculate when rawProducts changes
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "N/A";
@@ -304,40 +282,35 @@ const OrderDetailPage = () => {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   {/* Products Section with individual quantities */}
-                  {aggregatedProducts &&
-                    aggregatedProducts.length > 0 && ( // Use aggregatedProducts here
+                  {rawProducts &&
+                    rawProducts.length > 0 && ( // Use aggregatedProducts here
                       <div className="space-y-4">
                         <p className="text-sm text-gray-500">
                           Products Ordered
                         </p>
-                        {aggregatedProducts.map(
-                          (
-                            product // Map over aggregatedProducts
-                          ) => (
-                            <div
-                              key={product.id}
-                              className="flex justify-between items-center" // Dit is je parent div die 'justify-between' gebruikt
-                            >
-                              {/* Linker kant: Icoon, naam, en hoeveelheid */}
-                              <div className="flex items-center gap-3">
-                                <ShoppingCart className="h-4 w-4 text-gray-500" />
-                                <p className="font-semibold text-gray-900">
-                                  {product.name}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                  {product.quantity}x
-                                </p>
-                              </div>
-
-                              {/* Rechter kant: De prijs */}
-                              <p className="text-gray-700">
-                                <span className="font-medium text-gray-900">
-                                  € {(product.price ?? 0).toFixed(2)}
-                                </span>
+                        {rawProducts.map((product) => (
+                          <div
+                            key={product.id}
+                            className="flex justify-between items-center"
+                          >
+                            <div className="flex items-center gap-3">
+                              <ShoppingCart className="h-4 w-4 text-gray-500" />
+                              <p className="font-semibold text-gray-900">
+                                {product.name}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {product.productQuantity}x
                               </p>
                             </div>
-                          )
-                        )}
+                            <p className="text-gray-700">
+                              <span className="font-medium text-gray-900">
+                                €{" "}
+                                {(product.price ?? 0) *
+                                  (product.productQuantity ?? 1)}
+                              </span>
+                            </p>
+                          </div>
+                        ))}
                         <Separator className="bg-gray-200" />
                       </div>
                     )}
@@ -347,7 +320,7 @@ const OrderDetailPage = () => {
                       <p className="text-sm text-gray-500">Total Amount</p>
                       <p className="text-2xl font-bold text-green-600">
                         <Euro className="inline-block h-6 w-6 mr-1 -mt-1" />{" "}
-                        {(order.totalAmount ?? 0).toFixed(2)}{" "}
+                        {order.totalAmount}
                         {/* Format total amount */}
                       </p>
                     </div>

@@ -22,7 +22,7 @@ export type Product = {
   features?: string[];
   reviews?: Review[];
   sellerId?: string;
-  quantity?: number;
+  productQuantity?: number;
 };
 
 export type Review = {
@@ -38,7 +38,7 @@ export type Order = {
   products?: Product[];
   sellerId?: string;
   buyerId?: string;
-  quantity?: number;
+  orderQuantity?: number;
   totalAmount?: number;
   status?: OrderStatus;
   createdAt?: string;
@@ -76,14 +76,13 @@ export type StatusMessage = {
 };
 
 export type Cart = {
-  userId?: string;
   items?: CartItem[];
   updatedAt?: Date;
 };
 
 export type CartItem = {
   productId?: string;
-  quantity?: number;
+  productQuantity?: number;
   price?: number;
   color?: string;
 };

@@ -40,7 +40,6 @@ const OrdersPage = () => {
     fetchOrders();
   }, [router]);
 
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -115,7 +114,7 @@ const OrdersPage = () => {
                             <Euro className="h-4 w-4" />
                             <span className="font-medium">Total:</span>
                             <span className="font-semibold text-gray-900">
-                              € {order.totalAmount?.toFixed(2)}
+                              € {order.totalAmount}
                             </span>
                           </div>
 
@@ -123,7 +122,7 @@ const OrdersPage = () => {
                             <Package className="h-4 w-4" />
                             <span className="font-medium">Quantity:</span>
                             <span className="text-gray-900">
-                              {order.quantity}
+                              {order.orderQuantity}
                             </span>
                           </div>
 

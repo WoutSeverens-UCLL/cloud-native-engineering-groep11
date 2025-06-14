@@ -16,6 +16,7 @@ interface ProductParams {
   features?: string[];
   reviews?: Review[];
   sellerId: string;
+  productQuantity?: number;
 }
 
 export class Product {
@@ -33,6 +34,7 @@ export class Product {
   readonly features: string[];
   readonly reviews: Review[];
   readonly sellerId: string;
+  readonly productQuantity?: number;
 
   constructor({
     id,
@@ -49,6 +51,7 @@ export class Product {
     features = [],
     reviews = [],
     sellerId,
+    productQuantity,
   }: ProductParams) {
     this.validate({ name, description, price, category, stock });
 
@@ -66,6 +69,7 @@ export class Product {
     this.features = features;
     this.reviews = reviews;
     this.sellerId = sellerId;
+    this.productQuantity = productQuantity;
   }
 
   private validate({

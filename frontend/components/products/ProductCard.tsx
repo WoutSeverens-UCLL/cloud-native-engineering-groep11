@@ -15,72 +15,6 @@ interface Props {
 
 const ProductCard: React.FC<Props> = ({ product }) => {
   const router = useRouter();
-  const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const loggedInUserString = sessionStorage.getItem("loggedInUser");
-    if (loggedInUserString !== null) {
-      setLoggedInUser(JSON.parse(loggedInUserString));
-    }
-  }, []);
-
-  const handleAddItemToCart = async () => {
-    try {
-      if (!product) {
-        toast.error("Product not found");
-        router.push("/products");
-        return;
-      }
-
-      if (!loggedInUser) {
-        toast.error("Please log in to add items to your cart.");
-        router.push("/login");
-        return;
-      }
-
-      const userId = loggedInUser?.email ?? "";
-
-      // Probeer de cart op te halen
-      const response = await CartService.getCartByUserId(userId);
-      let cartData;
-
-      if (response.ok) {
-        cartData = await response.json();
-      } else {
-        // Als er geen cart is, maak er een aan
-        const newCartResponse = await CartService.createCart({
-          userId,
-          items: [],
-          updatedAt: new Date(),
-        });
-
-        if (!newCartResponse.ok) {
-          toast.error("Failed to create a new cart.");
-          return;
-        }
-
-        cartData = await newCartResponse.json();
-      }
-
-      // Voeg het item toe aan de cart
-      const item = {
-        productId: product.id,
-        quantity: 1,
-        price: product.price,
-      };
-
-      const addItemResponse = await CartService.addItemToCart(item, userId);
-
-      if (addItemResponse.ok) {
-        toast.success("Product added to cart!");
-      } else {
-        toast.error("Failed to add product to cart.");
-      }
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
-      toast.error("Something went wrong while adding item to cart.");
-    }
-  };
 
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-gray-300">
@@ -119,9 +53,11 @@ const ProductCard: React.FC<Props> = ({ product }) => {
       <CardFooter className="p-4 pt-0">
         <Button
           className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer"
-          onClick={handleAddItemToCart}
+          onClick={() =>
+            router.push(`/products/${product.id}/${product.sellerId}`)
+          }
         >
-          <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+          <ShoppingCart className="mr-2 h-4 w-4" /> View Product
         </Button>
       </CardFooter>
     </Card>

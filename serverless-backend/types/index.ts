@@ -55,9 +55,3 @@ export type AuthenticationResponse = {
   email: string;
   role: Role;
 };
-
-export type CartItem = {
-  productId?: string;
-  quantity?: number;
-  price?: number;
-};
