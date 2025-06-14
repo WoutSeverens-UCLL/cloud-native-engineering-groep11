@@ -18,6 +18,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Product, User } from "types";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const ProductDetail = () => {
   const router = useRouter();
@@ -33,6 +39,7 @@ const ProductDetail = () => {
   const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   // Load user from session
   useEffect(() => {
@@ -63,6 +70,14 @@ const ProductDetail = () => {
         const data = await res.json();
         setProduct(data);
 
+        // Set default selections
+        if (data.colors && data.colors.length > 0) {
+          setSelectedColor(data.colors[0].toLowerCase());
+        }
+        if (data.sizes && data.sizes.length > 0) {
+          setSelectedSize(data.sizes[0]);
+        }
+
         const allRes = await ProductService.getAllProducts();
         const allProducts = await allRes.json();
         const related = allProducts
@@ -90,20 +105,42 @@ const ProductDetail = () => {
       return router.push("/login");
     }
 
-    try {
-      if (!product) return;
+    // Validatie voor verplichte selecties
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      toast.error("Please select a color.");
+      return;
+    }
 
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      toast.error("Please select a size.");
+      return;
+    }
+
+    try {
       const item = {
         productId: product.id,
         productQuantity: quantity,
         price: product.price,
+        color: selectedColor || undefined,
+        size: selectedSize || undefined,
       };
 
       CartService.addItemToCart(item);
-      toast.success("Product added to cart!");
+      toast.success(
+        `Product added to cart! ${
+          selectedColor ? `Color: ${selectedColor}` : ""
+        } ${selectedSize ? `Size: ${selectedSize}` : ""}`
+      );
     } catch (err) {
       console.error("Add to cart failed", err);
       toast.error("Could not add product to cart.");
+    }
+  };
+
+  const handleQuantityChange = (change: number) => {
+    const newQuantity = quantity + change;
+    if (newQuantity >= 1 && newQuantity <= (product?.stock || 99)) {
+      setQuantity(newQuantity);
     }
   };
 
@@ -305,12 +342,50 @@ const ProductDetail = () => {
         {/* Product Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <img
-              src={product.images?.[0] ?? "https://placehold.co/600x400"}
-              alt={product.name}
-              className="w-full h-auto object-contain rounded-md"
-              style={{ maxHeight: "400px" }}
-            />
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation={{
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+              }}
+              pagination={{
+                clickable: true,
+                dynamicBullets: true,
+              }}
+              spaceBetween={20}
+              slidesPerView={1}
+              loop={product.images && product.images.length > 1}
+              className="product-image-swiper"
+              style={
+                {
+                  "--swiper-navigation-color": "#7c3aed",
+                  "--swiper-pagination-color": "#7c3aed",
+                } as any
+              }
+            >
+              {(product.images ?? ["https://placehold.co/600x400"]).map(
+                (img, idx) => (
+                  <SwiperSlide key={idx}>
+                    <div className="w-full flex justify-center items-center bg-gray-50 rounded-md overflow-hidden">
+                      <img
+                        src={img}
+                        alt={`Product Image ${idx + 1}`}
+                        className="w-full h-auto object-cover"
+                        style={{
+                          maxHeight: "400px",
+                          minHeight: "300px",
+                          objectFit: "contain",
+                        }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "https://placehold.co/600x400?text=Image+Not+Found";
+                        }}
+                      />
+                    </div>
+                  </SwiperSlide>
+                )
+              )}
+            </Swiper>
           </div>
 
           <div>
@@ -350,44 +425,98 @@ const ProductDetail = () => {
               {/* Colors */}
               {Array.isArray(product.colors) && product.colors.length > 0 && (
                 <div className="mt-4">
-                  <h3 className="font-semibold mb-1">Colors:</h3>
+                  <h3 className="font-semibold mb-2">Colors:</h3>
                   <div className="flex space-x-2">
                     {product.colors.map((color, i) => {
                       const isSelected = selectedColor === color.toLowerCase();
                       return (
-                        <span
+                        <button
                           key={i}
-                          className={`w-8 h-8 rounded-full border cursor-pointer ${
+                          className={`w-10 h-10 rounded-full border-2 cursor-pointer transition-all hover:scale-110 ${
                             isSelected
-                              ? "border-4 border-purple-700"
-                              : "border-gray-300"
+                              ? "border-4 border-purple-700 shadow-lg"
+                              : "border-gray-300 hover:border-gray-400"
                           }`}
                           style={{ backgroundColor: color.toLowerCase() }}
                           title={color}
                           onClick={() => setSelectedColor(color.toLowerCase())}
-                        />
+                        >
+                          {isSelected && (
+                            <div className="w-full h-full rounded-full flex items-center justify-center">
+                              <div
+                                className="w-2 h-2 rounded-full"
+                                style={{
+                                  backgroundColor: getContrastColor(color),
+                                }}
+                              />
+                            </div>
+                          )}
+                        </button>
                       );
                     })}
                   </div>
+                  {selectedColor && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Selected:{" "}
+                      <span className="font-medium capitalize">
+                        {selectedColor}
+                      </span>
+                    </p>
+                  )}
                 </div>
               )}
 
               {/* Sizes */}
               {Array.isArray(product.sizes) && product.sizes.length > 0 && (
                 <div className="mt-4">
-                  <h3 className="font-semibold mb-1">Sizes:</h3>
-                  <div className="flex space-x-2">
+                  <h3 className="font-semibold mb-2">Sizes:</h3>
+                  <div className="flex flex-wrap gap-2">
                     {product.sizes.map((size, i) => (
-                      <span
+                      <button
                         key={i}
-                        className="px-3 py-1 rounded-full text-sm font-medium border border-gray-300 text-gray-700"
+                        className={`px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all hover:scale-105 cursor-pointer ${
+                          selectedSize === size
+                            ? "border-purple-700 bg-purple-700 text-white"
+                            : "border-gray-300 text-gray-700 hover:border-gray-400"
+                        }`}
+                        onClick={() => setSelectedSize(size)}
                       >
                         {size}
-                      </span>
+                      </button>
                     ))}
                   </div>
+                  {selectedSize && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Selected:{" "}
+                      <span className="font-medium">{selectedSize}</span>
+                    </p>
+                  )}
                 </div>
               )}
+
+              {/* Quantity Selector */}
+              <div className="mt-4">
+                <h3 className="font-semibold mb-2">Quantity:</h3>
+                <div className="flex items-center space-x-3">
+                  <button
+                    className="w-10 h-10 cursor-pointer rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-purple-700 hover:text-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => handleQuantityChange(-1)}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="text-xl font-semibold min-w-[3rem] text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    className="w-10 h-10 cursor-pointer rounded-full border-2 border-gray-300 flex items-center justify-center hover:border-purple-700 hover:text-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => handleQuantityChange(1)}
+                    disabled={quantity >= (product?.stock || 99)}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
 
               {/* Stock */}
               <div className="mt-4">
@@ -431,18 +560,28 @@ const ProductDetail = () => {
             {/* Add to Cart button */}
             <Button
               className={`w-full bg-gradient-to-r from-purple-700 to-indigo-800 cursor-pointer ${
-                loggedInUser.role === "seller"
+                loggedInUser.role === "seller" ||
+                (typeof product.stock === "number" && product.stock <= 0)
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:from-purple-800 hover:to-indigo-900"
               } text-white font-semibold py-3 flex items-center justify-center`}
               onClick={() => {
-                if (loggedInUser.role !== "seller") {
+                if (
+                  loggedInUser.role !== "seller" &&
+                  (typeof product.stock !== "number" || product.stock > 0)
+                ) {
                   handleAddToCart();
                 }
               }}
+              disabled={
+                loggedInUser.role === "seller" ||
+                (typeof product.stock === "number" && product.stock <= 0)
+              }
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
-              Add to Cart
+              {typeof product.stock === "number" && product.stock <= 0
+                ? "Out of Stock"
+                : "Add to Cart"}
             </Button>
           </div>
         </div>
