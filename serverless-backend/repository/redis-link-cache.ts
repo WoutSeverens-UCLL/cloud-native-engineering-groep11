@@ -1,62 +1,73 @@
-import { createClient, RedisClientType } from "redis";
+import { createClient } from "redis";
 
+interface RedisProxyInterface {
+  set: (key: string, value: string, options?: {}) => Promise<string>;
+  get: (key: string) => Promise<string>;
+  quit: () => Promise<string>;
+  isOpen: boolean;
+  isReady: boolean;
+  connect: () => Promise<unknown>;
+}
+
+// Environment variables for cache
 export class LinkCache {
   private static instance: LinkCache;
-  private readonly cacheClient: RedisClientType<any, any>;
 
-  private constructor(redisClient: RedisClientType<any, any>) {
+  private readonly cacheClient: RedisProxyInterface;
+
+  private constructor(redisClient: RedisProxyInterface) {
+    if (!redisClient) {
+      throw new Error("A Redis client is required.");
+    }
     this.cacheClient = redisClient;
   }
 
-  private static async createClient(): Promise<RedisClientType<any, any>> {
+  private static async createClient() {
     const cacheHostName = process.env.REDIS_HOST_NAME;
     const cachePassword = process.env.REDIS_ACCESS_KEY;
     const cachePort = process.env.REDIS_PORT || "6380";
 
-    if (!cacheHostName) throw new Error("REDIS_HOST_NAME is empty");
-    if (!cachePassword) throw new Error("REDIS_ACCESS_KEY is empty");
+    if (!cacheHostName) throw Error("REDIS_HOST_NAME is empty");
+    if (!cachePassword) throw Error("REDIS_ACCESS_KEY is empty");
 
     const cacheConnection = createClient({
       url: `rediss://${cacheHostName}:${cachePort}`,
       password: cachePassword,
-      socket: {
-        tls: true,
-      },
     });
-
-    cacheConnection.on("error", (err) => console.error("Redis Error:", err));
 
     await cacheConnection.connect();
     return cacheConnection;
   }
 
-  static async getInstance(): Promise<LinkCache> {
+  static async getInstance() {
     if (!this.instance) {
-      const client = await this.createClient();
-      this.instance = new LinkCache(client);
-    } else if (!this.instance.cacheClient.isOpen) {
-      try {
-        await this.instance.cacheClient.connect();
-      } catch (err) {
-        console.error("Reconnecting Redis client...", err);
-        this.instance = new LinkCache(await this.createClient());
+      const cacheConnection = await this.createClient();
+      this.instance = new LinkCache(cacheConnection);
+    } else {
+      if (
+        !this.instance.cacheClient.isOpen ||
+        !this.instance.cacheClient.isReady
+      ) {
+        try {
+          await this.instance.cacheClient.connect();
+        } catch (error) {
+          console.error(error);
+          this.instance = new LinkCache(await this.createClient());
+        }
       }
     }
     return this.instance;
   }
 
-  async quit(): Promise<void> {
+  async quit() {
     await this.cacheClient.quit();
   }
 
-  async setLinkMapping(link: string, mapping: string): Promise<void> {
-    await this.cacheClient.set(mapping, link, {
-      EX: 600,
-    });
+  async setLinkMapping(link: string, mapping: string) {
+    await this.cacheClient.set(mapping, link, { EX: 600 });
   }
 
-  async getLinkMapping(mapping: string): Promise<string | null> {
-    const value = await this.cacheClient.get(mapping);
-    return typeof value === "string" ? value : null;
+  async getLinkMapping(mapping: string) {
+    return await this.cacheClient.get(mapping);
   }
 }
