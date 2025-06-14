@@ -6,6 +6,7 @@ import Head from "next/head";
 import router from "next/router";
 import { useEffect, useState } from "react";
 import { User } from "types";
+import { toast } from "react-hot-toast";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<Array<User>>();
@@ -21,10 +22,16 @@ const Users: React.FC = () => {
   }, []);
 
   const getAllUsers = async () => {
-    const response = await UserService.getAllUsers();
-    const users = await response.json();
-    setUsers(users);
-    setError(users.message);
+    try {
+      const response = await UserService.getAllUsers();
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const users = await response.json();
+      setUsers(users);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+      setError("Failed to fetch users");
+      toast.error("Failed to fetch users");
+    }
   };
 
   useEffect(() => {
@@ -43,53 +50,12 @@ const Users: React.FC = () => {
     );
   }
 
-  if (!loggedInUser) {
+  if (!loggedInUser || loggedInUser.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md border-t-4 border-t-purple-700 p-6 text-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 border-t-4 border-t-purple-700 text-center">
           <div className="mb-4">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-purple-100">
-              <svg
-                className="h-6 w-6 text-purple-700"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-            </div>
-          </div>
-          <h3 className="text-lg font-semibold text-black mb-2">
-            Authentication Required
-          </h3>
-          <p className="text-gray-600">
-            You need to be logged in to view all users. Please log in to
-            continue.
-          </p>
-          <div className="mt-6">
-            <button
-              onClick={() => router.push("/login")}
-              className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-800 hover:to-indigo-900 text-white font-semibold cursor-pointer px-4 py-2 rounded-md transition-colors"
-            >
-              Go to Login
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loggedInUser && loggedInUser.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 border-t-4 border-purple-700 text-center">
-          <div className="mb-4">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
               <svg
                 className="h-6 w-6 text-purple-700"
                 fill="none"
@@ -125,22 +91,26 @@ const Users: React.FC = () => {
   }
 
   return (
-    <>
-      <Head>
-        <title>Users</title>
-      </Head>
+    <div className="min-h-screen bg-gray-50">
       <Header />
-      <main>
-        <h1>Users</h1>
-        <section>
-          {error ? (
-            <main className="alert alert-info">{error}</main>
-          ) : (
-            users && <UsersOverviewTable users={users} />
-          )}
-        </section>
-      </main>
-    </>
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Users</h1>
+        </div>
+
+        {error ? (
+          <div className="text-center py-12 bg-white rounded-lg shadow">
+            <p className="text-lg text-red-600">{error}</p>
+          </div>
+        ) : !users || users.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-lg shadow">
+            <p className="text-lg text-gray-500">No users found</p>
+          </div>
+        ) : (
+          <UsersOverviewTable users={users} onUserDeleted={getAllUsers} />
+        )}
+      </div>
+    </div>
   );
 };
 

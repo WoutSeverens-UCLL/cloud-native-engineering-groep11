@@ -48,10 +48,27 @@ const loginUser = (user: User) => {
   );
 };
 
+const deleteUser = (email: string) => {
+  return fetch(
+    process.env.NEXT_PUBLIC_API_URL +
+      "/users/delete/" +
+      email,
+      // process.env.FK_USERS_DELETE,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+    }
+  );
+};
+
 const UserService = {
   signupUser,
   loginUser,
   getAllUsers,
+  deleteUser,
 };
 
 export default UserService;
