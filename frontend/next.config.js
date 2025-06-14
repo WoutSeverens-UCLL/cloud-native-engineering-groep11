@@ -1,6 +1,6 @@
 module.exports = {
   env: {
-    NEXT_PUBLIC_API_URL: "https://cne-azfunction.azurewebsites.net/api",
+    NEXT_PUBLIC_API_URL: "http://localhost:7071/api",
     FK_USERS_LOGIN:
       "?code=SpfLEh2LFQxhSWmB4jdsTE6k9vU53nAd4kJmfzd2O66gAzFuHJO6yQ==",
     FK_USERS: "?code=jaHufhTCxLAr2cWhXLw0Mpy7qAk42H2AXG_286XNvWoUAzFuE1ayVA==",

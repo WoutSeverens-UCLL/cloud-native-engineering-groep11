@@ -10,8 +10,8 @@ interface RedisProxyInterface {
 }
 
 // Environment variables for cache
-export class LinkCache {
-  private static instance: LinkCache;
+export class ShopyCache {
+  private static instance: ShopyCache;
 
   private readonly cacheClient: RedisProxyInterface;
 
@@ -42,7 +42,7 @@ export class LinkCache {
   static async getInstance() {
     if (!this.instance) {
       const cacheConnection = await this.createClient();
-      this.instance = new LinkCache(cacheConnection);
+      this.instance = new ShopyCache(cacheConnection);
     } else {
       if (
         !this.instance.cacheClient.isOpen ||
@@ -52,7 +52,7 @@ export class LinkCache {
           await this.instance.cacheClient.connect();
         } catch (error) {
           console.error(error);
-          this.instance = new LinkCache(await this.createClient());
+          this.instance = new ShopyCache(await this.createClient());
         }
       }
     }
@@ -63,11 +63,11 @@ export class LinkCache {
     await this.cacheClient.quit();
   }
 
-  async setLinkMapping(link: string, mapping: string) {
-    await this.cacheClient.set(mapping, link, { EX: 600 });
+  async get(key: string) {
+    return await this.cacheClient.get(key);
   }
 
-  async getLinkMapping(mapping: string) {
-    return await this.cacheClient.get(mapping);
+  async set(key: string, value: string) {
+    return await this.cacheClient.set(key, value, { EX: 600 });
   }
 }
