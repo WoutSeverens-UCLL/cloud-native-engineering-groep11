@@ -1,6 +1,6 @@
 import { Product } from "../model/product";
 import { CustomError } from "../model/custom-error";
-import { Category, Colors, Sizes } from "../types";
+import { Category } from "../types";
 import { Review } from "../model/review";
 import { Container, CosmosClient } from "@azure/cosmos";
 
@@ -12,14 +12,16 @@ interface CosmosDocument {
   brand?: string;
   images?: string[];
   rating?: number;
-  colors?: Colors[];
-  sizes?: Sizes[];
+  colors?: string[];
+  sizes?: string[];
   category: Category;
   stock: number;
   features?: string[];
   reviews?: Review[];
   sellerId: string;
   productQuantity?: number;
+  productColor?: string;
+  productSize?: string;
 }
 
 export class CosmosProductRepository {
@@ -54,6 +56,8 @@ export class CosmosProductRepository {
       reviews: document.reviews,
       sellerId: document.sellerId,
       productQuantity: document.productQuantity,
+      productColor: document.productColor,
+      productSize: document.productSize,
     });
   }
 
@@ -126,6 +130,8 @@ export class CosmosProductRepository {
       reviews: product.reviews,
       sellerId: product.sellerId,
       productQuantity: product.productQuantity,
+      productColor: product.productColor,
+      productSize: product.productSize,
     });
 
     if (!result.resource || !result.resource.id) {
