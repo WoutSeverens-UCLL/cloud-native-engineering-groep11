@@ -266,7 +266,15 @@ const MyProducts = () => {
                         ? `€ ${product.price.toFixed(2)}`
                         : "N/A"}
                     </TableCell>
-                    <TableCell>{product.stock ?? "N/A"}</TableCell>
+                    <TableCell>
+                      {product.stock === 0 ? (
+                        <span className="text-red-600 font-semibold">
+                          Out of stock
+                        </span>
+                      ) : (
+                        product.stock ?? "N/A"
+                      )}
+                    </TableCell>
                     <TableCell className="text-center">
                       <Link
                         href={`/products/${product.id}/${product.sellerId}`}
