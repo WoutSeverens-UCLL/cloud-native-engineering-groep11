@@ -75,36 +75,4 @@ module.exports = {
       "?code=-WhqbF1mcCzaQxu2C1CcjuDBhYDsJTLMzrD2RmZS-XBHAzFu5EFnrw==",
   },
   output: "export",
-  images: {
-    unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
-  },
-  // Remove rewrites as they're not supported in static export
-  // Instead, we'll handle routing in the pages themselves
-
-  // Simplified exportPathMap that doesn't depend on runtime data
-  exportPathMap: function () {
-    return {
-      // Static pages
-      "/": { page: "/" },
-      "/login": { page: "/login" },
-      "/signup": { page: "/signup" },
-      "/products": { page: "/products" },
-      "/myproducts": { page: "/myproducts" },
-      "/orders": { page: "/orders" },
-      "/cart": { page: "/cart" },
-      // Add a fallback page for dynamic routes
-      "/products/[id]/[sellerId]": { page: "/products/[id]/[sellerId]" },
-      "/products/edit/[id]": { page: "/products/edit/[id]" },
-      "/orders/detail/[id]": { page: "/orders/detail/[id]" },
-      "/users/edit/[email]": { page: "/users/edit/[email]" },
-    };
-  },
-  // Ensure trailing slashes for proper static file generation
-  trailingSlash: true,
 };

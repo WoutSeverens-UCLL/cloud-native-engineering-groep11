@@ -20,80 +20,17 @@ import { toast } from "sonner";
 import { Product, User } from "types";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { GetStaticProps, GetStaticPaths } from "next";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-// Add getStaticPaths to handle static generation
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [], // Don't pre-generate any pages at build time
-    fallback: "blocking", // Show a loading state while generating new pages
-  };
-};
-
-// Add getStaticProps to handle static generation
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  try {
-    const { id, sellerId } = params as { id: string; sellerId: string };
-
-    // Fetch product data
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/products/id/${id}/seller/${sellerId}${process.env.FK_PRODUCTS_GET_BY_ID_SELLER_ID}`
-    );
-
-    if (!res.ok) {
-      return {
-        notFound: true,
-      };
-    }
-
-    const product = await res.json();
-
-    // Fetch related products
-    const allRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/products${process.env.FK_PRODUCTS}`
-    );
-    const allProducts = await allRes.json();
-    const relatedProducts = allProducts
-      .filter(
-        (p: Product) => p.id !== product.id && p.category === product.category
-      )
-      .slice(0, 4);
-
-    return {
-      props: {
-        product,
-        relatedProducts,
-      },
-      revalidate: 60, // Revalidate every 60 seconds
-    };
-  } catch (error) {
-    console.error("Error in getStaticProps:", error);
-    return {
-      notFound: true,
-    };
-  }
-};
-
-const ProductDetail = ({
-  product: initialProduct,
-  relatedProducts: initialRelatedProducts,
-}: {
-  product?: Product;
-  relatedProducts?: Product[];
-}) => {
+const ProductDetail = () => {
   const router = useRouter();
   const { id, sellerId } = router.query;
 
-  const [product, setProduct] = useState<Product | null>(
-    initialProduct || null
-  );
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>(
-    initialRelatedProducts || []
-  );
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
@@ -118,10 +55,9 @@ const ProductDetail = ({
     setLoadingUser(false);
   }, []);
 
-  // Modify the useEffect to only fetch if we don't have initial data
+  // Load product and related products
   useEffect(() => {
     if (!router.isReady || !id || !sellerId || loadingUser) return;
-    if (initialProduct) return; // Skip fetching if we have initial data
 
     const fetchData = async () => {
       setIsLoading(true);
@@ -160,7 +96,7 @@ const ProductDetail = ({
     };
 
     fetchData();
-  }, [router.isReady, id, sellerId, loadingUser, initialProduct]);
+  }, [router.isReady, id, sellerId, loadingUser]);
 
   const handleAddToCart = async () => {
     if (!product) return;
