@@ -1,6 +1,6 @@
 const { createClient } = require("redis");
 const { DefaultAzureCredential } = require("@azure/identity");
-require('dotenv').config();
+require("dotenv").config();
 
 async function returnPassword(credential) {
   const redisScope = "https://redis.azure.com/.default";
