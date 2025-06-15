@@ -1,32 +1,36 @@
 #!/bin/bash
 
-# Set your Azure Storage account name, container name, and SAS token
+set -e  # Exit on error
+
+# Set variables
 storage_account="$AZURE_STORAGE_ACCOUNT"
-container_name="$AZURE_STORAGE_CONTAINER"
 sas_token="$AZURE_STORAGE_SAS_TOKEN"
+source_dir="./frontend/out"
+container_name="\$web"  # For static site, it's always $web
 
-# Set the local folder path
-#!/bin/bash
+# Debug info
+echo "Azure Storage Account: $storage_account"
+echo "Destination Container: $container_name"
+echo "Source Folder: $source_dir"
 
-set -e  # Exit script on any error
-
-# Print environment info (for debugging in CI/CD)
-echo "Azure Storage Account: $AZURE_STORAGE_ACCOUNT"
-echo "Destination Container: \$web"
-echo "Source Folder: ./frontend/out"
-
-# Ensure required env vars are set
-if [[ -z "$AZURE_STORAGE_ACCOUNT" || -z "$AZURE_STORAGE_SAS_TOKEN" ]]; then
-  echo "Error: AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_SAS_TOKEN must be set."
+# Check env
+if [[ -z "$storage_account" || -z "$sas_token" ]]; then
+  echo "❌ Missing required environment variables."
   exit 1
 fi
 
-# Upload static site to Azure Blob Storage ($web container)
+# Check if source folder exists
+if [[ ! -d "$source_dir" ]]; then
+  echo "❌ Error: Source folder '$source_dir' does not exist."
+  exit 2
+fi
+
+# Upload files
 az storage blob upload-batch \
-  --account-name "$AZURE_STORAGE_ACCOUNT" \
-  --destination '$web' \
-  --source "./frontend/out" \
-  --sas-token "$AZURE_STORAGE_SAS_TOKEN" \
+  --account-name "$storage_account" \
+  --destination \$web \
+  --source "$source_dir" \
+  --sas-token "$sas_token" \
   --overwrite
 
 echo "✅ Static site successfully deployed to Azure Blob Storage."
