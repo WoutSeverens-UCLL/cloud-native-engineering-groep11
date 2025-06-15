@@ -255,7 +255,7 @@ const CartPage = () => {
                     <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium">Your cart is empty</h3>
                     <p className="text-muted-foreground mt-2">
-                      Browse our products and add items to your cart.
+                      Browse our products and add items to cart.
                     </p>
                     <Button
                       asChild
@@ -386,7 +386,7 @@ const CartPage = () => {
                             </div>
                           </div>
                         </div>
-                      ) 
+                      )
                     )}
                   </div>
                 )}
