@@ -53,7 +53,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-            - name: "Resolve Project Dependencies Using Npm"
+      - name: "Resolve Project Dependencies Using Npm"
         shell: pwsh
         run: |
           cd '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
