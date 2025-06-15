@@ -25,14 +25,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: build frontend
+      - name: build frontend and export
         run: |
           cd frontend
-          npm cache clean --force
-          rm -rf node_modules package-lock.json
           npm install
           npm run build
-          cd ..
+          npx next export
+          ls -la out
 
       - name: Run Upload Script
         run: |
