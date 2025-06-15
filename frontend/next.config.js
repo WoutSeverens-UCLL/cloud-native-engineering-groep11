@@ -75,4 +75,67 @@ module.exports = {
       "?code=-WhqbF1mcCzaQxu2C1CcjuDBhYDsJTLMzrD2RmZS-XBHAzFu5EFnrw==",
   },
   output: "export",
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
+  // Configure which pages should be static and which should be dynamic
+  exportPathMap: async function () {
+    // Get all products for pre-generation
+    const productsRes = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + "/products" + process.env.FK_PRODUCTS
+    );
+    const products = await productsRes.json();
+
+    // Create the path map
+    const paths = {
+      // Static pages
+      "/": { page: "/" },
+      "/login": { page: "/login" },
+      "/signup": { page: "/signup" },
+      "/products": { page: "/products" },
+      "/myproducts": { page: "/myproducts" },
+      "/orders": { page: "/orders" },
+      "/cart": { page: "/cart" },
+
+      // Pre-generated product detail pages
+      ...products.reduce(
+        (acc, product) => ({
+          ...acc,
+          [`/products/${product.id}/${product.sellerId}`]: {
+            page: "/products/[id]/[sellerId]",
+            query: { id: product.id, sellerId: product.sellerId },
+          },
+        }),
+        {}
+      ),
+    };
+
+    return paths;
+  },
+  // Handle 404s for dynamic routes
+  async rewrites() {
+    return [
+      // Protected routes that should be handled client-side
+      {
+        source: "/products/edit/:id",
+        destination: "/products/edit/[id]",
+      },
+      {
+        source: "/orders/detail/:id",
+        destination: "/orders/detail/[id]",
+      },
+      {
+        source: "/users/edit/:email",
+        destination: "/users/edit/[email]",
+      },
+    ];
+  },
+  // Ensure trailing slashes for proper static file generation
+  trailingSlash: true,
 };
