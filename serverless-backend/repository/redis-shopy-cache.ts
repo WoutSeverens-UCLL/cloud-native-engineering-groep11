@@ -1,4 +1,5 @@
 import { createClient } from "redis";
+require("dotenv").config();
 
 interface RedisProxyInterface {
   set: (key: string, value: string, options?: {}) => Promise<string>;
