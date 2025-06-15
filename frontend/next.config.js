@@ -19,7 +19,7 @@ module.exports = {
     // Product Functions
     FK_PRODUCTS:
       "?code=kbNBjLs92qGQz_815N1U2zkmOvCBu2Ckf8X8czXfBl55AzFuy13Bmw==",
-    FK_PRODUCTS_GET_BY_ID_SELLER_ID:
+    NEXT_PUBLIC_FK_PRODUCTS_GET_BY_ID_SELLER_ID:
       "?code=_qm2wbJVdNmY8X_ZKS9rSJ8AvQ60ASLX3Bm25ocep6_TAzFu3muLew==",
     FK_PRODUCTS_CREATE:
       "?code=6YX2yTQHbonshocdTU0xP4R9r3eCd_Um6iTawOfemzxVAzFueZI2Mw==",
