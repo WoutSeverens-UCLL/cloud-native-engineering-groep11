@@ -25,13 +25,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: build frontend and export
+      - name: build frontend
         run: |
           cd frontend
+          npm cache clean --force
+          rm -rf node_modules package-lock.json
           npm install
           npm run build
-          ls -la out
-
       - name: Run Upload Script
         run: |
           chmod +x upload-to-azure.sh
