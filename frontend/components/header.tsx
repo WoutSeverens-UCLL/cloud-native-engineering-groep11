@@ -66,7 +66,7 @@ const Header = () => {
               className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
             >
               <Home className="h-4 w-4" />
-              Home
+              home
             </Link>
 
             {loggedInUser && loggedInUser.role === "admin" && (
