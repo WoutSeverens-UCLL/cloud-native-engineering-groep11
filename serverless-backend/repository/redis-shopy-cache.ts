@@ -68,6 +68,6 @@ export class ShopyCache {
   }
 
   async set(key: string, value: string) {
-    return await this.cacheClient.set(key, value, { EX: 600 });
+    return await this.cacheClient.set(key, value, { EX: 5 });
   }
 }
