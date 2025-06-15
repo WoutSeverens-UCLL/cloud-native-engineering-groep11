@@ -55,7 +55,7 @@ const Header = () => {
           <Link href="/" className="flex items-center space-x-2">
             <ShoppingCart className="h-7 w-7" />
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-100">
-              Shoppy
+              Shopy
             </span>
           </Link>
 
@@ -66,7 +66,7 @@ const Header = () => {
               className="flex items-center gap-1.5 font-medium hover:text-purple-200 transition-colors"
             >
               <Home className="h-4 w-4" />
-              home
+              Home
             </Link>
 
             {loggedInUser && loggedInUser.role === "admin" && (
