@@ -84,16 +84,12 @@ module.exports = {
       },
     ],
   },
-  // Configure which pages should be static and which should be dynamic
-  exportPathMap: async function () {
-    // Get all products for pre-generation
-    const productsRes = await fetch(
-      process.env.NEXT_PUBLIC_API_URL + "/products" + process.env.FK_PRODUCTS
-    );
-    const products = await productsRes.json();
+  // Remove rewrites as they're not supported in static export
+  // Instead, we'll handle routing in the pages themselves
 
-    // Create the path map
-    const paths = {
+  // Simplified exportPathMap that doesn't depend on runtime data
+  exportPathMap: function () {
+    return {
       // Static pages
       "/": { page: "/" },
       "/login": { page: "/login" },
@@ -102,39 +98,12 @@ module.exports = {
       "/myproducts": { page: "/myproducts" },
       "/orders": { page: "/orders" },
       "/cart": { page: "/cart" },
-
-      // Pre-generated product detail pages
-      ...products.reduce(
-        (acc, product) => ({
-          ...acc,
-          [`/products/${product.id}/${product.sellerId}`]: {
-            page: "/products/[id]/[sellerId]",
-            query: { id: product.id, sellerId: product.sellerId },
-          },
-        }),
-        {}
-      ),
+      // Add a fallback page for dynamic routes
+      "/products/[id]/[sellerId]": { page: "/products/[id]/[sellerId]" },
+      "/products/edit/[id]": { page: "/products/edit/[id]" },
+      "/orders/detail/[id]": { page: "/orders/detail/[id]" },
+      "/users/edit/[email]": { page: "/users/edit/[email]" },
     };
-
-    return paths;
-  },
-  // Handle 404s for dynamic routes
-  async rewrites() {
-    return [
-      // Protected routes that should be handled client-side
-      {
-        source: "/products/edit/:id",
-        destination: "/products/edit/[id]",
-      },
-      {
-        source: "/orders/detail/:id",
-        destination: "/orders/detail/[id]",
-      },
-      {
-        source: "/users/edit/:email",
-        destination: "/users/edit/[email]",
-      },
-    ];
   },
   // Ensure trailing slashes for proper static file generation
   trailingSlash: true,
