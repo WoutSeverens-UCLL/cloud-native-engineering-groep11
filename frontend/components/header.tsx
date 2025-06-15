@@ -55,7 +55,7 @@ const Header = () => {
           <Link href="/" className="flex items-center space-x-2">
             <ShoppingCart className="h-7 w-7" />
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-100">
-              Shopy
+              Shoppy
             </span>
           </Link>
 
