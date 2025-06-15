@@ -32,6 +32,8 @@ jobs:
           rm -rf node_modules package-lock.json
           npm install
           npm run build
+          cd ..
+
       - name: Run Upload Script
         run: |
           chmod +x upload-to-azure.sh
