@@ -165,6 +165,21 @@ const OrderDetailPage = () => {
     }
   };
 
+  function capitalizeFirstLetter(str: string) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // Calculate total amount for the order
+  const totalAmount = useMemo(() => {
+    if (!rawProducts) return 0;
+    return rawProducts.reduce(
+      (sum, product) =>
+        sum + (product.price ?? 0) * (product.productQuantity ?? 1),
+      0
+    );
+  }, [rawProducts]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
@@ -282,49 +297,93 @@ const OrderDetailPage = () => {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   {/* Products Section with individual quantities */}
-                  {rawProducts &&
-                    rawProducts.length > 0 && ( // Use aggregatedProducts here
-                      <div className="space-y-4">
-                        <p className="text-sm text-gray-500">
-                          Products Ordered
-                        </p>
-                        {rawProducts.map((product) => (
-                          <div
-                            key={product.id}
-                            className="flex justify-between items-center"
-                          >
-                            <div className="flex items-center gap-3">
-                              <ShoppingCart className="h-4 w-4 text-gray-500" />
-                              <p className="font-semibold text-gray-900">
+                  {rawProducts && rawProducts.length > 0 && (
+                    <div className="space-y-4">
+                      <p className="text-sm text-gray-500">Products Ordered</p>
+                      {rawProducts.map((product) => (
+                        <div
+                          key={product.id}
+                          className="flex justify-between items-center"
+                        >
+                          <div className="flex items-center gap-3">
+                            {product.images && (
+                              <img
+                                src={product.images[0]}
+                                alt={product.name}
+                                className="w-12 h-12 object-cover rounded"
+                              />
+                            )}
+                            <div>
+                              <p className="font-semibold text-gray-900 flex items-center gap-2">
                                 {product.name}
+                                <span className="text-sm text-gray-500">
+                                  x{product.productQuantity}
+                                </span>
                               </p>
-                              <p className="text-sm text-gray-500">
-                                {product.productQuantity}x
-                              </p>
+                              {(product.productColor ||
+                                product.productSize) && (
+                                <div className="flex flex-wrap gap-3 text-xs text-gray-500 mt-1">
+                                  {product.productColor && (
+                                    <span className="flex items-center gap-1">
+                                      <span
+                                        className="w-4 h-4 rounded-full border border-gray-300"
+                                        style={{
+                                          backgroundColor: product.productColor,
+                                        }}
+                                      />
+                                      {capitalizeFirstLetter(
+                                        product.productColor
+                                      )}
+                                    </span>
+                                  )}
+                                  {product.productSize && (
+                                    <span
+                                      className="
+    min-w-[1.5rem] 
+    px-2 
+    h-6 
+    flex 
+    items-center 
+    justify-center 
+    border 
+    border-gray-300 
+    rounded-full 
+    text-xs 
+    font-semibold 
+    text-gray-700
+  "
+                                    >
+                                      {product.productSize}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                            <p className="text-gray-700">
-                              <span className="font-medium text-gray-900">
-                                €{" "}
-                                {(product.price ?? 0) *
-                                  (product.productQuantity ?? 1)}
-                              </span>
-                            </p>
                           </div>
-                        ))}
-                        <Separator className="bg-gray-200" />
-                      </div>
-                    )}
+                          <p className="text-gray-700">
+                            <span className="font-medium text-gray-900">
+                              €{" "}
+                              {(
+                                (product.price ?? 0) *
+                                (product.productQuantity ?? 1)
+                              ).toFixed(2)}
+                            </span>
+                          </p>
+                        </div>
+                      ))}
 
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm text-gray-500">Total Amount</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        <Euro className="inline-block h-6 w-6 mr-1 -mt-1" />{" "}
-                        {order.totalAmount}
-                        {/* Format total amount */}
-                      </p>
+                      {/* Total Amount in dezelfde container, rechts uitgelijnd */}
+                      <div className="flex justify-between items-center border-t border-gray-200 pt-4">
+                        <p className="text-sm text-gray-500 font-semibold">
+                          Total Amount
+                        </p>
+                        <p className="text-2xl font-bold text-green-600">
+                          <Euro className="inline-block h-6 w-6 mr-1 -mt-1" />{" "}
+                          {order.totalAmount?.toFixed(2) || "0.00"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

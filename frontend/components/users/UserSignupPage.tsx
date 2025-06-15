@@ -14,6 +14,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { StatusMessage } from "types";
+import { Role } from "types";
 
 const UserSignupPage: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -24,7 +25,7 @@ const UserSignupPage: React.FC = () => {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState<Role | null>(null);
   const [roleError, setRoleError] = useState<string | null>(null);
   const [statusMessages, setStatusMessages] = useState<StatusMessage[]>([]);
   const [showPassword, setShowPassword] = useState(false);
@@ -79,7 +80,7 @@ const UserSignupPage: React.FC = () => {
       return;
     }
 
-    const user = { firstName, lastName, email, password, role };
+    const user = { firstName, lastName, email, password, role: role as Role };
     const response = await UserService.signupUser(user);
 
     if (response.status === 200) {
@@ -230,14 +231,17 @@ const UserSignupPage: React.FC = () => {
                 Role
               </Label>
               <div className="relative">
-                <Input
-                  id="role"
-                  type="text"
-                  placeholder="Enter your role"
-                  className="pl-10 border-gray-200"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                />
+                <select
+                  value={role ?? ""}
+                  onChange={(e) => setRole(e.target.value as Role)}
+                >
+                  <option value="">-- Select role --</option>
+                  {Object.values(Role).map((r) => (
+                    <option key={r} value={r}>
+                      {r.charAt(0).toUpperCase() + r.slice(1)}
+                    </option>
+                  ))}
+                </select>
               </div>
               {roleError && <p className="text-sm text-red-600">{roleError}</p>}
             </div>

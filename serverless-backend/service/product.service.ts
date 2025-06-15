@@ -32,6 +32,8 @@ export class ProductService {
       reviews: product.reviews,
       sellerId: product.sellerId,
       productQuantity: product.productQuantity,
+      productColor: product.productColor,
+      productSize: product.productSize,
     });
     return (await this.getRepo()).createProduct(createdProduct);
   }

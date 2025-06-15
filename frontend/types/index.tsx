@@ -1,10 +1,29 @@
+export enum Category {
+  ELECTRONICS = "electronics",
+  CLOTHING = "clothing",
+  HOME = "home",
+  BOOKS = "books",
+  TOYS = "toys",
+  SPORTS = "sports",
+  HEALTH = "health",
+  BEAUTY = "beauty",
+  AUTOMOTIVE = "automotive",
+  GROCERY = "grocery",
+}
+
+export enum Role {
+  BUYER = "buyer",
+  ADMIN = "admin",
+  SELLER = "seller",
+}
+
 export type User = {
   id?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
   password?: string;
-  role?: string;
+  role?: Role;
 };
 
 export type Product = {
@@ -23,6 +42,8 @@ export type Product = {
   reviews?: Review[];
   sellerId?: string;
   productQuantity?: number;
+  productColor?: string;
+  productSize?: string;
 };
 
 export type Review = {
@@ -85,4 +106,5 @@ export type CartItem = {
   productQuantity?: number;
   price?: number;
   color?: string;
+  size?: string;
 };

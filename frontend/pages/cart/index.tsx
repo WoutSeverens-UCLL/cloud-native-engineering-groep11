@@ -10,7 +10,14 @@ import {
 import { Separator } from "@components/ui/separator";
 import CartService from "@services/CartService";
 import ProductService from "@services/ProductService";
-import { ArrowLeft, Loader, Minus, Plus, ShoppingCart } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader,
+  Minus,
+  Plus,
+  ShoppingCart,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -21,10 +28,18 @@ const CartPage = () => {
   const router = useRouter();
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
   const [cartProducts, setCartProducts] = useState<
-    { itemId: string; quantity: number; product: Product }[]
+    {
+      itemId: string;
+      quantity: number;
+      product: Product;
+      color: string;
+      size: string;
+    }[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [deletingItems, setDeletingItems] = useState<Set<string>>(new Set());
+
   const totalAmount = cartProducts.reduce(
     (total, item) => total + (item.product.price ?? 0) * item.quantity,
     0
@@ -61,6 +76,8 @@ const CartPage = () => {
             itemId: item.productId ?? "",
             quantity: item.productQuantity ?? 0,
             product,
+            color: item.color ?? "",
+            size: item.size ?? "",
           };
         })
       );
@@ -70,6 +87,26 @@ const CartPage = () => {
 
     fetchCartProducts();
   }, []);
+
+  const removeItemFromCart = async (productId: string) => {
+    try {
+      setDeletingItems((prev) => new Set(prev).add(productId));
+      CartService.removeItemFromCart(productId);
+      setCartProducts((prev) =>
+        prev.filter((item) => item.itemId !== productId)
+      );
+      toast.success("Item removed from cart!");
+    } catch (error) {
+      console.error("Failed to remove item:", error);
+      toast.error("Failed to remove item. Please try again.");
+    } finally {
+      setDeletingItems((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
+    }
+  };
 
   const clearCart = async () => {
     try {
@@ -228,25 +265,129 @@ const CartPage = () => {
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {cartProducts.map(({ itemId, quantity, product }) => (
-                      <div
-                        key={itemId}
-                        className="flex items-center justify-between border-b border-gray-200 py-4"
-                      >
-                        <div className="flex items-center gap-4">
-                          <h3 className="text-lg font-semibold">
-                            {product.name}
-                          </h3>
-                          <p className="text-sm text-gray-500">{quantity}x</p>
+                  <div className="space-y-6">
+                    {cartProducts.map(
+                      ({ itemId, quantity, product, color, size }) => (
+                        <div
+                          key={itemId}
+                          className="flex items-start gap-4 border-b border-gray-200 pb-6 last:border-b-0"
+                        >
+                          {/* Product Image */}
+                          <div className="flex-shrink-0">
+                            <img
+                              src={
+                                product.images?.[0] ||
+                                "https://placehold.co/100x100"
+                              }
+                              alt={product.name || "Product"}
+                              className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  "https://placehold.co/100x100?text=No+Image";
+                              }}
+                            />
+                          </div>
+
+                          {/* Product Details */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                                  {product.name}
+                                </h3>
+
+                                {/* Product variants */}
+                                <div className="mt-2 space-y-1">
+                                  {color && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-gray-500">
+                                        Color:
+                                      </span>
+                                      <div className="flex items-center gap-1">
+                                        <div
+                                          className="w-4 h-4 rounded-full border border-gray-300"
+                                          style={{ backgroundColor: color }}
+                                          title={color}
+                                        />
+                                        <span className="text-sm font-medium capitalize">
+                                          {color}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {size && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-gray-500">
+                                        Size:
+                                      </span>
+                                      <span className="text-sm font-medium">
+                                        {size}
+                                      </span>
+                                    </div>
+                                  )}
+
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500">
+                                      Quantity:
+                                    </span>
+                                    <span className="text-sm font-medium">
+                                      {quantity}x
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Category and Brand */}
+                                <div className="mt-2 flex gap-2">
+                                  {product.category && (
+                                    <span className="inline-block px-2 py-1 bg-gray-100 text-xs rounded-full text-gray-600">
+                                      {product.category}
+                                    </span>
+                                  )}
+                                  {product.brand && (
+                                    <span className="inline-block px-2 py-1 bg-gray-100 text-xs rounded-full text-gray-600">
+                                      {product.brand}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Price and Actions Section */}
+                              <div className="text-right ml-4 flex flex-col items-end gap-2">
+                                <div>
+                                  <div className="text-lg font-bold text-gray-900">
+                                    €{" "}
+                                    {((product.price ?? 0) * quantity).toFixed(
+                                      2
+                                    )}
+                                  </div>
+                                  {quantity > 1 && (
+                                    <div className="text-sm text-gray-500">
+                                      € {(product.price ?? 0).toFixed(2)} each
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Delete Button */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => removeItemFromCart(itemId)}
+                                  disabled={deletingItems.has(itemId)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 hover:border-red-300 cursor-pointer"
+                                >
+                                  {deletingItems.has(itemId) ? (
+                                    <Loader className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-lg font-medium">
-                            € {((product.price ?? 0) * quantity).toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                      ) 
+                    )}
                   </div>
                 )}
               </CardContent>
