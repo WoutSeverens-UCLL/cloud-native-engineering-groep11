@@ -236,11 +236,13 @@ const UserSignupPage: React.FC = () => {
                   onChange={(e) => setRole(e.target.value as Role)}
                 >
                   <option value="">-- Select role --</option>
-                  {Object.values(Role).map((r) => (
-                    <option key={r} value={r}>
-                      {r.charAt(0).toUpperCase() + r.slice(1)}
-                    </option>
-                  ))}
+                  {Object.values(Role)
+                    .filter((r) => r === "buyer" || r === "seller")
+                    .map((r) => (
+                      <option key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1)}
+                      </option>
+                    ))}
                 </select>
               </div>
               {roleError && <p className="text-sm text-red-600">{roleError}</p>}

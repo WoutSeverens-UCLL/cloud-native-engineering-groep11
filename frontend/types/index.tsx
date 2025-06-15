@@ -17,6 +17,11 @@ export enum Role {
   SELLER = "seller",
 }
 
+export enum RoleToChoose {
+  BUYER = "buyer",
+  SELLER = "seller",
+}
+
 export type User = {
   id?: string;
   firstName?: string;
