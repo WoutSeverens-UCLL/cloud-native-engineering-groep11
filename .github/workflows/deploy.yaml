@@ -30,7 +30,6 @@ jobs:
           cd frontend
           npm install
           npm run build
-          npx next export
           ls -la out
 
       - name: Run Upload Script

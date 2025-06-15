@@ -1,36 +1,32 @@
 #!/bin/bash
 
-set -e  # Exit on error
-
-# Set variables
+# Set your Azure Storage account name, container name, and SAS token
 storage_account="$AZURE_STORAGE_ACCOUNT"
+container_name="$AZURE_STORAGE_CONTAINER"
 sas_token="$AZURE_STORAGE_SAS_TOKEN"
-source_dir="./frontend/out"
-container_name="\$web"  # For static site, it's always $web
 
-# Debug info
-echo "Azure Storage Account: $storage_account"
-echo "Destination Container: $container_name"
-echo "Source Folder: $source_dir"
+# Set the local folder path
+local_folder="./frontend/out"
 
-# Check env
-if [[ -z "$storage_account" || -z "$sas_token" ]]; then
-  echo "❌ Missing required environment variables."
-  exit 1
-fi
+# Iterate over each file in the local folder and its subfolders
+find "$local_folder" -type f | while read -r file_path; do
+    if [ -f "$file_path" ]; then
+        # Extract the relative path from the local folder
+        relative_path=${file_path#$local_folder/}
 
-# Check if source folder exists
-if [[ ! -d "$source_dir" ]]; then
-  echo "❌ Error: Source folder '$source_dir' does not exist."
-  exit 2
-fi
+        # Construct the Blob Storage URL for the file
+        blob_url="https://$storage_account.blob.core.windows.net/$container_name/$relative_path?$sas_token"
 
-# Upload files
-az storage blob upload-batch \
-  --account-name "$storage_account" \
-  --destination \$web \
-  --source "$source_dir" \
-  --sas-token "$sas_token" \
-  --overwrite
+        # Set Content-Type based on file extension
+        extension="${file_path##*.}"
+        content_type=""
+        if [ "$extension" == "css" ]; then
+            content_type="text/css"
+        else
+            content_type=$(file --mime-type -b "$file_path")
+        fi
 
-echo "✅ Static site successfully deployed to Azure Blob Storage."
+        # Upload the file to Blob Storage using curl
+        curl -X PUT -T "$file_path" -H "x-ms-blob-type: BlockBlob" -H "Content-Type: $content_type" "$blob_url"
+    fi
+done
