@@ -5,7 +5,7 @@ container_name="$AZURE_STORAGE_CONTAINER"
 sas_token="$AZURE_STORAGE_SAS_TOKEN"
 
 # Set the local folder path
-local_folder="../frontend/out"
+local_folder="./frontend/out"
 
 find "$local_folder" -type f | while read -r file_path; do
     if [ -f "$file_path" ]; then
