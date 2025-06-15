@@ -31,7 +31,7 @@ jobs:
           npm cache clean --force
           rm -rf node_modules package-lock.json
           npm install
-          npm run build
+          npm run build && npm run export
       - name: Run Upload Script
         run: |
           chmod +x upload-to-azure.sh
