@@ -60,7 +60,7 @@ const UsersOverviewTable: React.FC<Props> = ({ users, onUserDeleted }) => {
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="border-b-gray-200 hover:bg-gray-100">
+          <TableRow className="border-b-gray-200">
             <TableHead className="text-gray-500 font-semibold">
               First Name
             </TableHead>
